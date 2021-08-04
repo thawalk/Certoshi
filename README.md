@@ -1,8 +1,5 @@
-# Certificate Generation and Validation Using Blockchain
+# Blockchain Smart Contracts enabled Certificate service
 
-[![Docker Build](https://img.shields.io/docker/pulls/yogdaan/blockchain-certification?label=Docker%20Pulls&style=flat-square)](https://hub.docker.com/r/yogdaan/blockchain-certification)
-[![Build Status](https://travis-ci.org/yogdaan/blockchain-certification.svg?branch=master)](https://travis-ci.org/yogdaan/blockchain-certification)
-[![Join the chat at https://gitter.im/yogdaan/blockchain-certification](https://img.shields.io/gitter/room/certification-validation/community.js.svg?style=for-the-badge)](https://gitter.im/yogdaan/blockchain-certification)  
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
 > Built using Ethereum on local blockchain setup and deployed on Rinkeby test network.
@@ -57,7 +54,7 @@
    db.createUser({
      user: "<YOUR USER NAME>",
      pwd: "<YOUR USER PASSWORD>",
-     roles: [{ role: "dbOwner", db: "certification" }]
+     roles: [{ role: "dbOwner", db: "certification" }],
    });
    ```
 
@@ -98,13 +95,3 @@ To test the app run the command `truffle test`. RPC server should be running to 
 ## Useful reads
 
 - [Some instructions and commands for debugging in Truffle Console](./instructions/COMMANDS.md)
-
-## Youtube Video for better understanding of the project
-
-[![youtube-picture](https://img.youtube.com/vi/pByqlMCx7Bk/maxresdefault.jpg)](https://www.youtube.com/watch?v=pByqlMCx7Bk)
-
----
-
-| Developers                                             |                                                               |
-| ------------------------------------------------------ | ------------------------------------------------------------- |
-| [Saurabh Thakur](https://github.com/thakursaurabh1998) | ![st](https://avatars0.githubusercontent.com/u/18613564?s=50) |

@@ -1,52 +1,51 @@
 {
-  "name": "certification-server",
-  "version": "0.0.2",
-  "engines": {
-    "node": ">=8.11.2"
-  },
-  "description": "API for ethereum certification blockchain service",
-  "scripts": {
-    "start": "nodemon server.js",
-    "test-windows": "truffle.cmd test test/certification-web3.js && mocha test/*.test.js",
-    "test-linux": "truffle test test/certification-web3.js && mocha test/*.test.js",
-    "test-server": "mocha test/*.test.js",
-    "test": "npm run test-windows || npm run test-linux",
-    "contract-deploy": "truffle.cmd migrate --reset || truffle migrate --reset",
-    "deploy": "truffle.cmd migrate -f 2 --network rinkeby || truffle migrate -f 2 --network rinkeby",
-    "ganache": "ganache-cli -p 8545 &",
-    "heroku-postbuild": "npm install --prefix client && npm run build --prefix client"
-  },
-  "author": "Saurabh Thakur",
-  "license": "MIT",
-  "devDependencies": {
-    "babel-cli": "^6.22.2",
-    "babel-core": "^6.22.1",
-    "babel-eslint": "^9.0.0",
-    "babel-plugin-transform-runtime": "^6.22.0",
-    "babel-preset-env": "^1.1.8",
-    "babel-preset-es2015": "^6.22.0",
-    "babel-register": "^6.22.0",
-    "cors": "^2.8.5",
-    "expect": "^23.6.0",
-    "mocha": "^5.2.0",
-    "json-loader": "^0.5.4",
-    "supertest": "^3.3.0"
-  },
-  "dependencies": {
-    "babel-loader": "^8.0.4",
-    "body-parser": "^1.18.2",
-    "chalk": "^2.4.1",
-    "css-loader": "^0.26.1",
-    "dotenv": "^6.2.0",
-    "express": "^4.16.2",
-    "jquery": "^3.5.0",
-    "mongoose": "^5.4.0",
-    "nodemon": "^1.14.12",
-    "scrypt": "github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
-    "solc": "^0.4.25",
-    "style-loader": "^0.13.1",
-    "truffle-contract": "^1.1.11",
-    "truffle-hdwallet-provider": "0.0.6",
-    "web3": "^1.0.0-beta.37"
-  }
+    "name": "satoshi-certs",
+    "version": "0.0.2",
+    "engines": {
+        "node": ">=8.11.2"
+    },
+    "description": "Blockchain Smart Contracts Enabled Certification service for generation and verification",
+    "scripts": {
+        "start": "nodemon server.js",
+        "test-windows": "truffle.cmd test test/certification-web3.js && mocha test/*.test.js",
+        "test-linux": "truffle test test/certification-web3.js && mocha test/*.test.js",
+        "test-server": "mocha test/*.test.js",
+        "test": "npm run test-windows || npm run test-linux",
+        "contract-deploy": "truffle.cmd migrate --reset || truffle migrate --reset",
+        "deploy": "truffle.cmd migrate -f 2 --network rinkeby || truffle migrate -f 2 --network rinkeby",
+        "ganache": "ganache-cli -p 8545 &",
+        "heroku-postbuild": "npm install --prefix client && npm run build --prefix client"
+    },
+    "author": "Tharun",
+    "license": "MIT",
+    "devDependencies": {
+        "babel-cli": "^6.22.2",
+        "babel-core": "^6.22.1",
+        "babel-eslint": "^9.0.0",
+        "babel-plugin-transform-runtime": "^6.22.0",
+        "babel-preset-env": "^1.1.8",
+        "babel-preset-es2015": "^6.22.0",
+        "babel-register": "^6.22.0",
+        "cors": "^2.8.5",
+        "expect": "^23.6.0",
+        "mocha": "^5.2.0",
+        "json-loader": "^0.5.4",
+        "supertest": "^3.3.0"
+    },
+    "dependencies": {
+        "babel-loader": "^8.0.4",
+        "body-parser": "^1.18.2",
+        "chalk": "^2.4.1",
+        "css-loader": "^0.26.1",
+        "dotenv": "^6.2.0",
+        "express": "^4.16.2",
+        "jquery": "^3.5.0",
+        "mongoose": "^5.4.0",
+        "nodemon": "^1.14.12",
+        "solc": "^0.4.25",
+        "style-loader": "^0.13.1",
+        "truffle-contract": "^1.1.11",
+        "truffle-hdwallet-provider": "0.0.6",
+        "web3": "^1.0.0-beta.37"
+    }
 }
