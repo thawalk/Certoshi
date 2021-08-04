@@ -1,6 +1,6 @@
 {
-	"name": "Certification Validation",
-	"description": "A blockchain verified certification service",
-	"repository": "https://github.com/thakursaurabh1998/certification-validation",
-  "keywords": ["node", "express", "react", "ethereum"]
+    "name": "https://github.com/thawalk/satoshi-certs",
+    "description": "Certificate generation and verification",
+    "repository": "https://github.com/thawalk/satoshi-certs",
+    "keywords": ["node", "express", "react", "ethereum"]
 }
