@@ -1,28 +1,25 @@
 import React from "react";
-import Certification from '../contracts/Certification.json'
+import Institution from '../contracts/Institution.json'
 import Web3 from 'web3'
 
 class GenerateForm extends React.Component {
     state = {
         owner: '0x0',
         isOwner: false,
-        certification: {},
+        institute: {},
         renderLoading: true,
         renderAdmin: false,
         renderMetaMaskError: false
+
     };
 
     async componentWillMount() {
-        await this.loadWeb3()
-        await this.loadBlockChainData()
+        await this.loadWeb3Metamask()
+        await this.loadBlockChainDataAndCheckAdmin()
     }
 
-
-
-    // check if this is a metamask enabled browser
-
     // way to connect first way
-    async loadWeb3() {
+    async loadWeb3Metamask() {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum)
             await window.ethereum.enable()
@@ -40,23 +37,23 @@ class GenerateForm extends React.Component {
     }
 
     // Load contract
-    async loadBlockChainData() {
+    async loadBlockChainDataAndCheckAdmin() {
         const web3 = window.web3
         try {
             const accounts = await web3.eth.getAccounts()
             console.log('checking accounts')
             console.log(accounts)
             let caller = accounts[0]
-            this.setState({ account: accounts[0] })
+            // this.setState({ account: accounts[0] })
 
             const networkId = await web3.eth.net.getId()
 
-            // Load certification contract
-            const certificationData = Certification.networks[networkId]
-            if (certificationData) {
+            // Load institurion contract
+            const institutionData = Institution.networks[networkId]
+            if (institutionData) {
                 // create a web3 version of the contract
-                const certification = new web3.eth.Contract(Certification.abi, certificationData.address)
-                this.setState({ certification })
+                const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
+                this.setState({ institution })
                 try {
                     // let owner = await certification.methods.checkOwner().call()
                     // console.log(owner)
@@ -71,9 +68,12 @@ class GenerateForm extends React.Component {
                     // )
                     // console.log(sender)
                     // console.log(sender.events.UserRegisterEVENT.returnValues)
-                    let smartContractOwner = await certification.methods.owner().call()
+
+                    // get owner of smart contract
+                    let smartContractOwner = await institution.methods.owner().call()
                     console.log(smartContractOwner)
 
+                    // compare the caller and the owner of smart contract
                     if (caller == smartContractOwner) {
 
                         // give access to the page
@@ -104,9 +104,43 @@ class GenerateForm extends React.Component {
         catch {
             window.alert('No accounts detected')
         }
-
-
     }
+
+    // let certification, institution;
+    // let mockOwnerAcc = accounts[0];
+    // let mockCert = {
+    //     candidateName: "John Lim",
+    //     orgName: "Singapore University of Technology and Design",
+    //     courseName: "Computer Science and Design",
+    //     expirationDate: new Date().getTime(),
+    //     id: "5c0157fd3ff47a2a54075b01",
+    // };
+    // let mockToken = "5c0157fd3ff47a2a54075b02";
+    // let mockInstitute = {
+    //     instituteName: "Singapore University of Technology and Design",
+    //     instituteAcronym: "SUTD",
+    //     instituteLink: "https://sutd.edu.sg/",
+    // };
+    // let mockInstituteCourses = [{
+    //         course_name: "Computer Science and Design",
+    //     },
+    //     {
+    //         course_name: "Engineering Product and Development",
+    //     },
+    //     {
+    //         course_name: "Engineering Systems and Design",
+    //     },
+    //     {
+    //         course_name: "Architecture and Sustainable Design",
+    //     },
+    // ];
+
+    async addInstituteToBlockchain() {
+        console.log("adding institute to the blockchain")
+
+    } 
+
+
 
     switchLoading = () => {
         const { renderLoading } = this.state
