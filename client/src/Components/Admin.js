@@ -106,7 +106,7 @@ class GenerateForm extends React.Component {
         }
     }
 
-    Tharun, [06.08.21 22: 10]
+    // Tharun, [06.08.21 22: 10] // Parsing error: Unexpected token
     // let certification, institution;
     // let mockOwnerAcc = accounts[0];
     // let mockCert = {
