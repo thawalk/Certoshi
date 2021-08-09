@@ -8,7 +8,6 @@ contract("Institution", (accounts) => {
     let mockOwnerAcc = accounts[0];
     let mockInstituteAcc = accounts[1];
     let mockRandomInvalidAcc = accounts[2];
-    let mockToken = "5c0157fd3ff47a2a54075b02";
     let mockInstitute = {
         instituteName: "Singapore University of Technology and Design",
         instituteAcronym: "SUTD",
@@ -44,7 +43,7 @@ contract("Institution", (accounts) => {
     describe("Adding of an Institution", async() => {
         it("adds an institution with valid id", async() => {
             const receipt = await institution.addInstitute(
-                mockToken,
+                mockInstituteAcc,
                 mockInstitute.instituteName,
                 mockInstitute.instituteAcronym,
                 mockInstitute.instituteLink,
@@ -65,7 +64,7 @@ contract("Institution", (accounts) => {
         it("fails if transaction is from an invalid owner (address)", async() => {
             try {
                 const receipt = await institution.addInstitute(
-                    mockToken,
+                    mockInstituteAcc,
                     mockInstitute.instituteName,
                     mockInstitute.instituteAcronym,
                     mockInstitute.instituteLink,
@@ -79,19 +78,19 @@ contract("Institution", (accounts) => {
                 );
             }
         });
-        it("fails if institute token already exists", async() => {
+        it("fails if institute address already exists", async() => {
             const institution2 = await Institution.new({ from: mockOwnerAcc });
             const receipt = await institution2.addInstitute(
-                mockToken,
+                mockInstituteAcc,
                 mockInstitute.instituteName,
                 mockInstitute.instituteAcronym,
                 mockInstitute.instituteLink,
                 mockInstituteCourses, { from: mockOwnerAcc }
             );
             try {
-                // add institute with same token - should fail
+                // add institute with same institute address - should fail
                 const receipt = await institution2.addInstitute(
-                    mockToken,
+                    mockInstituteAcc,
                     mockInstitute.instituteName,
                     mockInstitute.instituteAcronym,
                     mockInstitute.instituteLink,
@@ -108,8 +107,8 @@ contract("Institution", (accounts) => {
     });
 
     describe("Data Retrieval for Institute data", async() => {
-        it("retrieves correct institute data from valid token", async() => {
-            const instituteData = await institution.getInstituteData(mockToken);
+        it("retrieves correct institute data from valid institute address", async() => {
+            const instituteData = await institution.getInstituteData(mockInstituteAcc);
             assert.equal(
                 instituteData[0],
                 mockInstitute.instituteName,
@@ -135,11 +134,11 @@ contract("Institution", (accounts) => {
             );
         });
 
-        it("fails for invalid token", async() => {
-            const invalidToken = "invalidc0157fd3ff47a2a54075b02";
+        it("fails for invalid institute address", async() => {
+            const invalidAddress = "0x772394da93d6EbF5d4985E49ae3404a3DEE8243a";
             // Check error message - note: need to handle error in client side
             try {
-                const instituteData = await institution.getInstituteData(invalidToken);
+                const instituteData = await institution.getInstituteData(invalidAddress);
                 const failure = assert.fail(instituteData);
             } catch (err) {
                 assert(
@@ -151,15 +150,15 @@ contract("Institution", (accounts) => {
     });
 
     describe("Checking of Institute Permission in Institute Contract", async() => {
-        it("returns true with valid token", async() => {
-            const result = await institution.checkInstitutePermission(mockToken);
+        it("returns true with valid institute address", async() => {
+            const result = await institution.checkInstitutePermission(mockInstituteAcc);
             console.log(result);
             assert.equal(result, true);
         });
 
-        it("returns false with invalid token", async() => {
-            const invalidToken = "invalidc0157fd3ff47a2a54075b02";
-            const result = await institution.checkInstitutePermission(invalidToken);
+        it("returns false with invalid institute address", async() => {
+            const invalidAddress = "0x772394da93d6EbF5d4985E49ae3404a3DEE8243a";
+            const result = await institution.checkInstitutePermission(invalidAddress);
             console.log(result);
             assert.equal(result, false);
         });

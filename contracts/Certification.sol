@@ -43,16 +43,17 @@ contract Certification {
     }
 
     function generateCertificate(
-        string memory _token,
         string memory _id,
         string memory _candidate_name,
         string memory _org_name, 
         string memory _course_name, 
         uint256 _expiration_date) public {
-        require(institution.checkInstitutePermission(_token) == true, "Invalid institute token");
+        // require(institution.checkInstitutePermission(_token) == true, "Invalid institute token");
+        require(institution.checkInstitutePermission(msg.sender) == true, "Invalid institute token");
         bytes32 byte_id = stringToBytes32(_id);
         require(certificates[byte_id].expiration_date == 0, "Certificate with given id already exists");
-        (string memory _institute_name, string memory _institute_acronym, string memory _institute_link, Institution.Course[] memory _) = institution.getInstituteData(_token);
+        // (string memory _institute_name, string memory _institute_acronym, string memory _institute_link, Institution.Course[] memory _) = institution.getInstituteData(_token);
+        (string memory _institute_name, string memory _institute_acronym, string memory _institute_link, Institution.Course[] memory _) = institution.getInstituteData(msg.sender);
         certificates[byte_id] = Certificate(_candidate_name, _org_name, _course_name, _expiration_date, _institute_name, _institute_acronym, _institute_link);
         emit certificateGenerated(byte_id); // TODO: Maybe can change to return _id instead of byte_id for readability
     }
