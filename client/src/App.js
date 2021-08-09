@@ -7,6 +7,7 @@ import Homepage from "./Components/Homepage";
 import Dashboard from "./Components/Dashboard";
 import GenerateForm from './Components/GenerateForm';
 import Admin from './Components/Admin';
+import GenerateCert from './Components/GenerateCert';
 
 class App extends Component {
   render() {
@@ -16,6 +17,7 @@ class App extends Component {
         <Switch>
           <Route exact path="/" component={Homepage} />
           <Route exact path="/admin" component={Admin}/>
+          <Route exact path="/generateCert" component={GenerateCert}/>
           <Route path="/login" component={SignIn} />
           <Route path="/generate-certificate" component={GenerateForm} />
           <Route path="/display/certificate/:id" component={Dashboard} />
