@@ -1,31 +1,46 @@
 import React from "react";
 import Institution from '../contracts/Institution.json'
 import Web3 from 'web3'
+import { v4 as uuidv4 } from 'uuid';
 
-class GenerateForm extends React.Component {
+
+class GenerateCert extends React.Component {
     state = {
         owner: '0x0',
         isOwner: false,
         institute: {},
         renderLoading: true,
-        renderAdmin: false,
-        renderMetaMaskError: false
-
+        renderMetaMaskError: false,
+        instituteName: "",
+        instituteAcronym: "",
+        instituteWebsite: "",
+        instituteCourses: []
     };
+    // this.delta = this.delta.bind(this);
 
     async componentWillMount() {
         await this.loadWeb3Metamask()
-        // await this.loadBlockChainDataAndCheckAdmin()
     }
 
     // way to connect first way
     async loadWeb3Metamask() {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum)
-            await window.ethereum.enable()
+            console.log("passing")
+            await window.ethereum.enable().then(res => {
+                this.setState({
+                renderLoading: false,
+                renderMetaMaskError: false
+            })
+            })
         }
         else if (window.web3) {
             window.web3 = new Web3(window.web3.currentProvider)
+            console.log("passing as well")
+            this.setState({
+                renderLoading: false,
+                renderMetaMaskError: false
+            })
         }
         else {
             window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
@@ -36,138 +51,59 @@ class GenerateForm extends React.Component {
         }
     }
 
-    // Load contract
-    async loadBlockChainDataAndCheckAdmin() {
-        const web3 = window.web3
-        try {
-            const accounts = await web3.eth.getAccounts()
-            console.log('checking accounts')
-            console.log(accounts)
-            let caller = accounts[0]
-            // this.setState({ account: accounts[0] })
-
-            const networkId = await web3.eth.net.getId()
-
-            // Load institurion contract
-            const institutionData = Institution.networks[networkId]
-            if (institutionData) {
-                // create a web3 version of the contract
-                const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
-                this.setState({ institution })
-                try {
-                    // let owner = await certification.methods.checkOwner().call()
-                    // console.log(owner)
-                    // let sender = await certification.methods.checkSender()
-                    // .send({from: this.state.account}).on('receipt', function (receipt) {
-                    // console.log(receipt);
-                    // })
-                    // sender.then(res => {
-                    //     console.log("response")
-                    //     console.log(res)
-                    // }
-                    // )
-                    // console.log(sender)
-                    // console.log(sender.events.UserRegisterEVENT.returnValues)
-
-                    // get owner of smart contract
-                    let smartContractOwner = await institution.methods.owner().call()
-                    console.log(smartContractOwner)
-
-                    // compare the caller and the owner of smart contract
-                    if (caller == smartContractOwner) {
-
-                        // give access to the page
-                        this.setState({
-                            renderLoading: false,
-                            renderMetaMaskError: false,
-                            renderAdmin: true
-                        })
-                    }
-                    else {
-                        this.setState({
-                            renderLoading: false,
-                            renderMetaMaskError: false,
-                            renderAdmin: false
-                        })
-                        window.alert('You are not the admin')
-                    }
-                }
-                catch (error) {
-                    console.log(error)
-                }
-            }
-            else {
-                window.alert('Institution contract not deployed to network')
-
-            }
-        }
-        catch {
-            window.alert('No accounts detected')
-        }
-    }
-
-    // let certification, institution;
-    // let mockOwnerAcc = accounts[0];
-    // let mockCert = {
-    //     candidateName: "John Lim",
-    //     orgName: "Singapore University of Technology and Design",
-    //     courseName: "Computer Science and Design",
-    //     expirationDate: new Date().getTime(),
-    //     id: "5c0157fd3ff47a2a54075b01",
-    // };
-    // let mockToken = "5c0157fd3ff47a2a54075b02";
-    // let mockInstitute = {
-    //     instituteName: "Singapore University of Technology and Design",
-    //     instituteAcronym: "SUTD",
-    //     instituteLink: "https://sutd.edu.sg/",
-    // };
-    // let mockInstituteCourses = [{
-    //         course_name: "Computer Science and Design",
-    //     },
-    //     {
-    //         course_name: "Engineering Product and Development",
-    //     },
-    //     {
-    //         course_name: "Engineering Systems and Design",
-    //     },
-    //     {
-    //         course_name: "Architecture and Sustainable Design",
-    //     },
-    // ];
-
     async checkTokenAndGetCourses() {
         console.log("adding institute to the blockchain")
+        const web3 = window.web3
+        const accounts = await web3.eth.getAccounts()
+        let caller = accounts[0]
+
+        const networkId = await web3.eth.net.getId()
+        const institutionData = Institution.networks[networkId]
+        const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
+
+        let mockToken = '0f747a16-7c3a-4c98-9e1a-c4519cdb0682'
+
+        await institution.methods.getInstituteData(mockToken).call().then(res => {
+            const formattedInstituteCoursesData = res[3].map((x) => {
+                return { course_name: x.course_name };
+            });
+
+            this.setState({
+                instituteName: res[0],
+                instituteAcronym: res[1],
+                instituteWebsite: res[2],
+                instituteCourses: formattedInstituteCoursesData
+            })
+        })
+
+
     } 
-
-
-
-    switchLoading = () => {
-        const { renderLoading } = this.state
-        console.log('switching loading')
-        switch (renderLoading) {
-            case true:
-                return 'Loading'
-            case false:
-                return ''
-        }
-
-    }
 
     render() {
         const {
             renderLoading,
-            renderAdmin,
             renderMetaMaskError,
+            instituteName,
+            instituteAcronym,
+            instituteWebsite,
+            instituteCourses
         } = this.state;
         return (
             <>
                 {renderLoading ? (<h1>Loading</h1>) :
                     renderMetaMaskError ? (<h1>Metamask issue</h1>) :
-                        renderAdmin ? (<h1>Access granted</h1>) :
-                            (<h1>Not admin</h1>)}
+                            (<h1>Welcome</h1>)}
+                <button onClick={() => this.checkTokenAndGetCourses()}>
+                    Get courses
+                </button>
+                <h1>{instituteName}</h1>
+                <h1>{instituteAcronym}</h1>
+                <h1>{instituteWebsite}</h1>
+                {/*need to pipe properly, but the data is in instituteCourses*/}
+                {/* <h1>{instituteCourses}</h1> */}
             </>
         );
     }
 }
 
-export default GenerateForm
+export default GenerateCert

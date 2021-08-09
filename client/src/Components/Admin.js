@@ -1,15 +1,19 @@
 import React from "react";
 import Institution from '../contracts/Institution.json'
 import Web3 from 'web3'
+import { v4 as uuidv4 } from 'uuid';
+import contract from 'truffle-contract'
+const InstitutionInstance = contract(Institution)
 
-class GenerateForm extends React.Component {
+class Admin extends React.Component {
     state = {
         owner: '0x0',
         isOwner: false,
-        institute: {},
+        institution: {},
         renderLoading: true,
         renderAdmin: false,
         renderMetaMaskError: false
+
 
     };
 
@@ -44,38 +48,21 @@ class GenerateForm extends React.Component {
             console.log('checking accounts')
             console.log(accounts)
             let caller = accounts[0]
-            // this.setState({ account: accounts[0] })
 
             const networkId = await web3.eth.net.getId()
 
-            // Load institurion contract
+            // Load institution contract
             const institutionData = Institution.networks[networkId]
             if (institutionData) {
                 // create a web3 version of the contract
                 const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
                 this.setState({ institution })
                 try {
-                    // let owner = await certification.methods.checkOwner().call()
-                    // console.log(owner)
-                    // let sender = await certification.methods.checkSender()
-                    // .send({from: this.state.account}).on('receipt', function (receipt) {
-                    // console.log(receipt);
-                    // })
-                    // sender.then(res => {
-                    //     console.log("response")
-                    //     console.log(res)
-                    // }
-                    // )
-                    // console.log(sender)
-                    // console.log(sender.events.UserRegisterEVENT.returnValues)
-
                     // get owner of smart contract
                     let smartContractOwner = await institution.methods.owner().call()
-                    console.log(smartContractOwner)
 
                     // compare the caller and the owner of smart contract
                     if (caller == smartContractOwner) {
-
                         // give access to the page
                         this.setState({
                             renderLoading: false,
@@ -98,61 +85,85 @@ class GenerateForm extends React.Component {
             }
             else {
                 window.alert('Institution contract not deployed to network')
-
+                this.setState({
+                    renderLoading: false,
+                    renderMetaMaskError: true,
+                    renderAdmin: false
+                })
             }
         }
         catch {
-            window.alert('No accounts detected')
+            // window.alert('No accounts detected')
+            console.log("no accounts detected")
         }
     }
 
-    // Tharun, [06.08.21 22: 10] // Parsing error: Unexpected token
-    // let certification, institution;
-    // let mockOwnerAcc = accounts[0];
-    // let mockCert = {
-    //     candidateName: "John Lim",
-    //     orgName: "Singapore University of Technology and Design",
-    //     courseName: "Computer Science and Design",
-    //     expirationDate: new Date().getTime(),
-    //     id: "5c0157fd3ff47a2a54075b01",
-    // };
-    // let mockToken = "5c0157fd3ff47a2a54075b02";
-    // let mockInstitute = {
-    //     instituteName: "Singapore University of Technology and Design",
-    //     instituteAcronym: "SUTD",
-    //     instituteLink: "https://sutd.edu.sg/",
-    // };
-    // let mockInstituteCourses = [{
-    //         course_name: "Computer Science and Design",
-    //     },
-    //     {
-    //         course_name: "Engineering Product and Development",
-    //     },
-    //     {
-    //         course_name: "Engineering Systems and Design",
-    //     },
-    //     {
-    //         course_name: "Architecture and Sustainable Design",
-    //     },
-    // ];
+
 
     async addInstituteToBlockchain() {
         console.log("adding institute to the blockchain")
+        const web3 = window.web3
+        const accounts = await web3.eth.getAccounts()
+        let caller = accounts[0]
 
+        let unique_id = uuidv4()
+        console.log(unique_id)
+        let mockInstituteCourses = [{
+            course_name: "Computer Science and Design",
+        },
+        {
+            course_name: "Engineering Product and Development",
+        },
+        {
+            course_name: "Engineering Systems and Design",
+        },
+        {
+            course_name: "Architecture and Sustainable Design",
+        },
+        ];
 
+        let address = unique_id;
+        let mockInstitute = {
+            instituteName: "Singapore University of Technology and Design",
+            instituteAcronym: "SUTD",
+            instituteLink: "https://sutd.edu.sg/",
+        };
 
+        const networkId = await web3.eth.net.getId()
+        const institutionData = Institution.networks[networkId]
+        const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
 
-    switchLoading = () => {
-        const { renderLoading } = this.state
-        console.log('switching loading')
-        switch (renderLoading) {
-            case true:
-                return 'Loading'
-            case false:
-                return ''
+        console.log(institution)
+        try {
+            // get owner of smart contract
+            let smartContractOwner = await institution.methods.owner().call()
+
+            // compare the caller and the owner of smart contract
+            if (caller == smartContractOwner) {
+                await institution.methods.addInstitute(
+                    address,
+                    mockInstitute.instituteName,
+                    mockInstitute.instituteAcronym,
+                    mockInstitute.instituteLink,
+                    mockInstituteCourses
+                )
+                .send({ from: caller }).on('receipt', function (receipt) {
+                    console.log(receipt);
+                    console.log(receipt.events)
+                })
+            }
+            else {
+                window.alert('Not the account used to deploy smart contract')
+            }
         }
-
+        catch (error) {
+            console.log(error.code)
+            if (error.code == 4001) {
+                window.alert('Transaction rejected')
+            }
+        }
     }
+
 
     render() {
         const {
@@ -162,13 +173,19 @@ class GenerateForm extends React.Component {
         } = this.state;
         return (
             <>
-                {renderLoading ? (<h1>Loading</h1>) :
-                    renderMetaMaskError ? (<h1>Metamask issue</h1>) :
-                        renderAdmin ? (<h1>Access granted</h1>) :
-                            (<h1>Not admin</h1>)}
+                {
+                    renderLoading ? (<h1>Loading</h1>) :
+                        renderMetaMaskError ? (<h1>Metamask issue</h1>) :
+                            renderAdmin ? (<h1>Access granted</h1>) :
+                                (<h1>Not admin</h1>)
+
+                }
+                {renderAdmin ? <button onClick={this.addInstituteToBlockchain}>
+                    Add institute
+                </button>: <></>}
             </>
         );
     }
 }
 
-export default GenerateForm
+export default Admin
