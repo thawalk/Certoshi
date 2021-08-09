@@ -11,7 +11,6 @@ contract("Certification", (accounts) => {
     let mockInvalidAcc = accounts[2]
     let mockCert = {
         candidateName: "John Lim",
-        orgName: "Singapore University of Technology and Design",
         courseName: "Computer Science and Design",
         expirationDate: new Date().getTime(),
         id: "5c0157fd3ff47a2a54075b01",
@@ -60,7 +59,6 @@ contract("Certification", (accounts) => {
             const receipt = await certification.generateCertificate(
                 mockCert.id,
                 mockCert.candidateName,
-                mockCert.orgName,
                 mockCert.courseName,
                 mockCert.expirationDate, { from: mockInstituteAcc }
             );
@@ -82,7 +80,6 @@ contract("Certification", (accounts) => {
                 const receipt = await certification.generateCertificate(
                     mockCert.id,
                     mockCert.candidateName,
-                    mockCert.orgName,
                     mockCert.courseName,
                     mockCert.expirationDate, { from: mockInvalidAcc }
                 );
@@ -99,7 +96,6 @@ contract("Certification", (accounts) => {
             const receipt = await certification2.generateCertificate(
                 mockCert.id,
                 mockCert.candidateName,
-                mockCert.orgName,
                 mockCert.courseName,
                 mockCert.expirationDate, { from: mockInstituteAcc }
             );
@@ -108,7 +104,6 @@ contract("Certification", (accounts) => {
                 const receipt = await certification2.generateCertificate(
                     mockCert.id,
                     mockCert.candidateName,
-                    mockCert.orgName,
                     mockCert.courseName,
                     mockCert.expirationDate, { from: mockInstituteAcc }
                 );
@@ -133,33 +128,28 @@ contract("Certification", (accounts) => {
             );
             assert.equal(
                 certData[1],
-                mockCert.orgName,
-                "the organisation name of the certificate is incorrect"
-            );
-            assert.equal(
-                certData[2],
                 mockCert.courseName,
                 "the course name of the certificate is incorrect"
             );
             assert.equal(
-                certData[3],
+                certData[2],
                 mockCert.expirationDate,
                 "the expiration date is incorrect"
             );
 
             // Institute  Info
             assert.equal(
-                certData[4],
+                certData[3],
                 mockInstitute.instituteName,
                 "the institute name of the certificate is incorrect"
             );
             assert.equal(
-                certData[5],
+                certData[4],
                 mockInstitute.instituteAcronym,
                 "the institute acronym of the certificate is incorrect"
             );
             assert.equal(
-                certData[6],
+                certData[5],
                 mockInstitute.instituteLink,
                 "the institute link of the certificate is incorrect"
             );

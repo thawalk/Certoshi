@@ -29,9 +29,9 @@ class GenerateCert extends React.Component {
             window.web3 = new Web3(window.ethereum)
             await window.ethereum.enable().then(res => {
                 this.setState({
-                renderLoading: false,
-                renderMetaMaskError: false
-            })
+                    renderLoading: false,
+                    renderMetaMaskError: false
+                })
             })
         }
         else if (window.web3) {
@@ -63,13 +63,13 @@ class GenerateCert extends React.Component {
         // let instituteAddress = "0x83E41c66E7EE0f14d0Fc8E74720652F6662eB1Eb"
 
         let instituteAddress = "0x2C7475d55Fa3e0F239e244846CCe297fdeB3D0F3"
-        try{
-            
+        try {
+
             await institution.methods.getInstituteData(instituteAddress).call().then(res => {
                 const formattedInstituteCoursesData = res[3].map((x) => {
                     return { course_name: x.course_name };
                 });
-    
+
                 this.setState({
                     instituteName: res[0],
                     instituteAcronym: res[1],
@@ -83,7 +83,7 @@ class GenerateCert extends React.Component {
         }
 
 
-    } 
+    }
 
     async generateCertificate() {
         console.log("adding institute to the blockchain")
@@ -103,50 +103,51 @@ class GenerateCert extends React.Component {
 
         // instantiate the contract (---can't maintain it in a state for some reason, need to check again later----)
         const networkId = await web3.eth.net.getId()
-        const institutionData = Institution.networks[networkId]
-        const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
+        const certificationData = Certification.networks[networkId]
+        const certification = new web3.eth.Contract(Certification.abi, certificationData.address)
         try {
             // get owner of smart contract
-            let smartContractOwner = await institution.methods.owner().call()
+            // let smartContractOwner = await certification.methods.owner().call()
 
             // compare the caller and the owner of smart contract
-            if (caller == smartContractOwner) {
+            // if (caller == smartContractOwner) {
 
-                //------------ mock data -----------------//
-                // await institution.methods.addInstitute(
-                //     instituteAddress,
-                //     mockInstitute.instituteName,
-                //     mockInstitute.instituteAcronym,
-                //     mockInstitute.instituteLink,
-                //     mockInstituteCourses
-                // )
-                //------------ mock data -----------------//
+            //------------ mock data -----------------//
+            await certification.methods.generateCertificate(
+                // mockCert.id,
+                uuidv4(),
+                mockCert.candidateName,
+                mockCert.orgName,
+                mockCert.courseName,
+                mockCert.expirationDate,
+            )
+            //------------ mock data -----------------//
 
-                await institution.methods.addInstitute(
-                    this.state.instituteAddress,
-                    this.state.instituteName,
-                    this.state.instituteAcronym,
-                    this.state.instituteWebsite,
-                    this.state.instituteCourses
-                )
-                    .send({ from: caller }).on('receipt', function (receipt) {
-                        console.log(receipt);
-                        console.log(receipt.events)
-                        //-------clearing the value, doesn't work also----------//
-                        // this.setState({
-                        //     instituteAddress:"",
-                        //     instituteName:"",
-                        //     instituteAcronym: "",
-                        //     instituteWebsite: "",
-                        //     course: ""
-                        // })
+            await certification.methods.generateCertificate(
+                this.state.instituteAddress,
+                this.state.instituteName,
+                this.state.instituteAcronym,
+                this.state.instituteWebsite,
+                this.state.instituteCourses
+            )
+                .send({ from: caller }).on('receipt', function (receipt) {
+                    console.log(receipt);
+                    console.log(receipt.events)
+                    //-------clearing the value, doesn't work also----------//
+                    // this.setState({
+                    //     instituteAddress:"",
+                    //     instituteName:"",
+                    //     instituteAcronym: "",
+                    //     instituteWebsite: "",
+                    //     course: ""
+                    // })
 
-                        // ----- here can use a state or smth, to display a success message -----
-                    })
-            }
-            else {
-                window.alert('Not the account used to deploy smart contract')
-            }
+                    // ----- here can use a state or smth, to display a success message -----
+                })
+            // }
+            // else {
+            //     window.alert('Not the account used to deploy smart contract')
+            // }
         }
         catch (error) {
             console.log(error)
@@ -176,7 +177,7 @@ class GenerateCert extends React.Component {
             <>
                 {renderLoading ? (<h1>Loading</h1>) :
                     renderMetaMaskError ? (<h1>Metamask issue</h1>) :
-                            (<h1>Welcome</h1>)}
+                        (<h1>Welcome</h1>)}
                 <button onClick={() => this.checkTokenAndGetCourses()}>
                     Get courses
                 </button>

@@ -54,10 +54,6 @@ contract Institution {
             msg.sender == owner,
             "caller must be the owner - only owner can add an institute"
         );
-        // bytes32 byte_id = stringToBytes32(_token);
-        // bytes memory tempEmptyStringNameTest = bytes(
-        //     institutes[byte_id].institute_name
-        // );
         bytes memory tempEmptyStringNameTest = bytes(
             institutes[_address].institute_name
         );
@@ -65,20 +61,11 @@ contract Institution {
             tempEmptyStringNameTest.length == 0,
             "Institute with token already exists"
         );
-        // institutes[byte_id] = Institute(
-        //     _institute_name,
-        //     _institute_acronym,
-        //     _institute_link
-        // );
         institutes[_address] = Institute(
             _institute_name,
             _institute_acronym,
             _institute_link
         );
-        // instituteCourses[byte_id] = _institute_courses; // UnimplementedFeatureError: Copying of type struct Institution.Course memory[] memory to storage not yet supported.
-        // for (uint256 i = 0; i < _institute_courses.length; i++) {
-        //     instituteCourses[byte_id].push(_institute_courses[i]);
-        // }
         for (uint256 i = 0; i < _institute_courses.length; i++) {
             instituteCourses[_address].push(_institute_courses[i]);
         }
@@ -95,8 +82,6 @@ contract Institution {
             Course[] memory
         )
     {
-        // bytes32 byte_id = stringToBytes32(_token);
-        // Institute memory temp = institutes[byte_id];
         Institute memory temp = institutes[_address];
         bytes memory tempEmptyStringNameTest = bytes(temp.institute_name);
         require(
@@ -116,8 +101,6 @@ contract Institution {
         view
         returns (bool)
     {
-        // bytes32 byte_id = stringToBytes32(_token);
-        // Institute memory temp = institutes[byte_id];
         Institute memory temp = institutes[_address];
         bytes memory tempEmptyStringNameTest = bytes(temp.institute_name);
         if (tempEmptyStringNameTest.length > 0) {

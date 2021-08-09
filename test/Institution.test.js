@@ -41,7 +41,7 @@ contract("Institution", (accounts) => {
     });
 
     describe("Adding of an Institution", async() => {
-        it("adds an institution with valid id", async() => {
+        it("adds an institution with valid institute account", async() => {
             const receipt = await institution.addInstitute(
                 mockInstituteAcc,
                 mockInstitute.instituteName,
@@ -60,6 +60,28 @@ contract("Institution", (accounts) => {
                 mockInstitute.instituteName,
                 "the institution name is incorrect"
             );
+        });
+        it("fails if institute address is an invalid address data type", async() => {
+            try {
+                const invalidAddress = "1234" // this is not an address data type
+                const receipt = await institution.addInstitute(
+                    invalidAddress,
+                    mockInstitute.instituteName,
+                    mockInstitute.instituteAcronym,
+                    mockInstitute.instituteLink,
+                    mockInstituteCourses, { from: mockOwnerAcc }
+                );
+                const failure = assert.fail(receipt);
+            } catch (err) {
+                assert(
+                    err.message.code != "INVALID_ARGUMENT",
+                    "error message should contain invalid argument"
+                );
+                assert(
+                    err.message.argument != "_address",
+                    "error message for invalid argument should be _address"
+                );
+            }
         });
         it("fails if transaction is from an invalid owner (address)", async() => {
             try {
