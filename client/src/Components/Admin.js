@@ -1,7 +1,6 @@
 import React from "react";
 import Institution from '../contracts/Institution.json'
 import Web3 from 'web3'
-import { v4 as uuidv4 } from 'uuid';
 import TextField from '@material-ui/core/TextField';
 
 class Admin extends React.Component {
@@ -17,7 +16,6 @@ class Admin extends React.Component {
         instituteAcronym: "",
         instituteWebsite: "",
         course: "",
-        // instituteCourses: new Array()
         instituteCourses: []
     };
 
@@ -26,7 +24,6 @@ class Admin extends React.Component {
         await this.loadBlockChainDataAndCheckAdmin()
     }
 
-    // way to connect first way
     async loadWeb3Metamask() {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum)
@@ -108,7 +105,7 @@ class Admin extends React.Component {
         const accounts = await web3.eth.getAccounts()
         let caller = accounts[0]
 
-        //------------ mock data -----------------//
+        //------------ mock data start-----------------//
         // let instituteAddress = uuidv4()
 
         // let instituteAddress = "0x83E41c66E7EE0f14d0Fc8E74720652F6662eB1Eb"
@@ -132,7 +129,7 @@ class Admin extends React.Component {
         //     instituteAcronym: "SUTD",
         //     instituteLink: "https://sutd.edu.sg/",
         // };
-        //------------ mock data -----------------//
+        //------------ mock data end-----------------//
 
         // instantiate the contract (---can't maintain it in a state for some reason, need to check again later----)
         const networkId = await web3.eth.net.getId()
@@ -145,7 +142,7 @@ class Admin extends React.Component {
             // compare the caller and the owner of smart contract
             if (caller == smartContractOwner) {
 
-                //------------ mock data -----------------//
+                //------------ mock data start-----------------//
                 // await institution.methods.addInstitute(
                 //     instituteAddress,
                 //     mockInstitute.instituteName,
@@ -153,7 +150,7 @@ class Admin extends React.Component {
                 //     mockInstitute.instituteLink,
                 //     mockInstituteCourses
                 // )
-                //------------ mock data -----------------//
+                //------------ mock data end-----------------//
 
                 await institution.methods.addInstitute(
                     this.state.instituteAddress,

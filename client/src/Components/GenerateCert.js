@@ -3,7 +3,7 @@ import Institution from '../contracts/Institution.json'
 import Certification from '../contracts/Certification.json'
 import Web3 from 'web3'
 import { v4 as uuidv4 } from 'uuid';
-
+import TextField from '@material-ui/core/TextField';
 
 class GenerateCert extends React.Component {
     state = {
@@ -15,7 +15,11 @@ class GenerateCert extends React.Component {
         instituteName: "",
         instituteAcronym: "",
         instituteWebsite: "",
-        instituteCourses: []
+        instituteCourses: [],
+        candidateName: "",
+        selectedCourse: "",
+        expirationDate: 0,
+        isLegitInstitute: false
     };
     // this.delta = this.delta.bind(this);
 
@@ -23,7 +27,6 @@ class GenerateCert extends React.Component {
         await this.loadWeb3Metamask()
     }
 
-    // way to connect first way
     async loadWeb3Metamask() {
         if (window.ethereum) {
             window.web3 = new Web3(window.ethereum)
@@ -50,7 +53,7 @@ class GenerateCert extends React.Component {
         }
     }
 
-    async checkTokenAndGetCourses() {
+    async checkAddressAndGetCourses() {
         console.log("adding institute to the blockchain")
         const web3 = window.web3
         const accounts = await web3.eth.getAccounts()
@@ -62,7 +65,8 @@ class GenerateCert extends React.Component {
 
         // let instituteAddress = "0x83E41c66E7EE0f14d0Fc8E74720652F6662eB1Eb"
 
-        let instituteAddress = "0x2C7475d55Fa3e0F239e244846CCe297fdeB3D0F3"
+        // to be changed to not having address
+        let instituteAddress = "0x6a4Fc583Da50EB7Fc46A468C2a3A14fAC62b1833"
         try {
 
             await institution.methods.getInstituteData(instituteAddress).call().then(res => {
@@ -74,7 +78,8 @@ class GenerateCert extends React.Component {
                     instituteName: res[0],
                     instituteAcronym: res[1],
                     instituteWebsite: res[2],
-                    instituteCourses: formattedInstituteCoursesData
+                    instituteCourses: formattedInstituteCoursesData,
+                    isLegitInstitute: true
                 })
             })
         }
@@ -85,75 +90,61 @@ class GenerateCert extends React.Component {
 
     }
 
+
+
     async generateCertificate() {
-        console.log("adding institute to the blockchain")
+        console.log("generating certificate")
         const web3 = window.web3
         const accounts = await web3.eth.getAccounts()
         let caller = accounts[0]
 
-        //------------ mock data -----------------//
+        console.log(caller)
+
+        //------------ mock data start-----------------//
         let mockCert = {
             candidateName: "John Lim",
-            orgName: "Singapore University of Technology and Design",
             courseName: "Computer Science and Design",
+            //---------------- remember to convert to utc time -------------------//
             expirationDate: new Date().getTime(),
             id: "5c0157fd3ff47a2a54075b01",
         };
-        //------------ mock data -----------------//
+        //------------ mock data end-----------------//
 
         // instantiate the contract (---can't maintain it in a state for some reason, need to check again later----)
         const networkId = await web3.eth.net.getId()
         const certificationData = Certification.networks[networkId]
         const certification = new web3.eth.Contract(Certification.abi, certificationData.address)
         try {
-            // get owner of smart contract
-            // let smartContractOwner = await certification.methods.owner().call()
 
-            // compare the caller and the owner of smart contract
-            // if (caller == smartContractOwner) {
+            //------------ mock data start-----------------//
+            // await certification.methods.generateCertificate(
+            //     mockCert.id,
+            //     // uuidv4(),
+            //     mockCert.candidateName,
+            //     mockCert.courseName,
+            //     mockCert.expirationDate,
+            // )
+            //------------ mock data end -----------------//
 
-            //------------ mock data -----------------//
             await certification.methods.generateCertificate(
-                // mockCert.id,
                 uuidv4(),
-                mockCert.candidateName,
-                mockCert.orgName,
+                this.state.candidateName,
+                // use a dropdown menu to select course - change to this.state.courseName
                 mockCert.courseName,
+                // use like a date picker and convert to utc - change to this.state.expirationDate
                 mockCert.expirationDate,
-            )
-            //------------ mock data -----------------//
-
-            await certification.methods.generateCertificate(
-                this.state.instituteAddress,
-                this.state.instituteName,
-                this.state.instituteAcronym,
-                this.state.instituteWebsite,
-                this.state.instituteCourses
             )
                 .send({ from: caller }).on('receipt', function (receipt) {
                     console.log(receipt);
                     console.log(receipt.events)
-                    //-------clearing the value, doesn't work also----------//
-                    // this.setState({
-                    //     instituteAddress:"",
-                    //     instituteName:"",
-                    //     instituteAcronym: "",
-                    //     instituteWebsite: "",
-                    //     course: ""
-                    // })
-
                     // ----- here can use a state or smth, to display a success message -----
                 })
-            // }
-            // else {
-            //     window.alert('Not the account used to deploy smart contract')
-            // }
         }
         catch (error) {
             console.log(error)
             console.log(error.code)
             if (error.code == -32603) {
-                window.alert('Institute account already exits')
+                window.alert('Certificate with id already exits')
             }
             if (error.code == 4001) {
                 window.alert('Transaction rejected')
@@ -161,6 +152,11 @@ class GenerateCert extends React.Component {
         }
     }
 
+    handleTextFieldChangeCandidateName(e) {
+        this.setState({
+            candidateName: e.target.value
+        })
+    }
 
 
 
@@ -171,14 +167,16 @@ class GenerateCert extends React.Component {
             instituteName,
             instituteAcronym,
             instituteWebsite,
-            instituteCourses
+            instituteCourses,
+            isLegitInstitute,
+            candidateName
         } = this.state;
         return (
             <>
                 {renderLoading ? (<h1>Loading</h1>) :
                     renderMetaMaskError ? (<h1>Metamask issue</h1>) :
                         (<h1>Welcome</h1>)}
-                <button onClick={() => this.checkTokenAndGetCourses()}>
+                <button onClick={() => this.checkAddressAndGetCourses()}>
                     Get courses
                 </button>
                 <h1>{instituteName}</h1>
@@ -186,9 +184,29 @@ class GenerateCert extends React.Component {
                 <h1>{instituteWebsite}</h1>
                 {/*need to pipe properly, but the data is in instituteCourses*/}
                 {/* <h1>{instituteCourses}</h1> */}
-                <button onClick={() => this.generateCertificate()}>
-                    Generate Cert
-                </button>
+                {isLegitInstitute ?
+                    <>
+                        <TextField
+                            // add a error function to ensure they don't submit empty strings
+                            // error={error}
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label="CandidateName"
+                            type="name"
+                            fullWidth
+                            value={candidateName}
+                            // helperText={helperText}
+                            onChange={(e) => this.handleTextFieldChangeCandidateName(e)}
+                        />
+                        <h1>Add a expiration date picker here and connect with expirationDate state</h1>
+                        <h1>Add a course picker here and connect with selectedCourse state</h1>
+                        <button onClick={() => this.generateCertificate()}>
+                            Generate Cert
+                        </button>
+                    </> :
+                    <></>}
+
             </>
         );
     }
