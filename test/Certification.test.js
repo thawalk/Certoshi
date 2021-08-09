@@ -7,6 +7,8 @@ require("chai").use(require("chai-as-promised")).should();
 contract("Certification", (accounts) => {
     let certification, institution;
     let mockOwnerAcc = accounts[0];
+    let mockInstituteAcc = accounts[1]; // Same one used to add the institute
+    let mockInvalidAcc = accounts[2]
     let mockCert = {
         candidateName: "John Lim",
         orgName: "Singapore University of Technology and Design",
@@ -14,7 +16,6 @@ contract("Certification", (accounts) => {
         expirationDate: new Date().getTime(),
         id: "5c0157fd3ff47a2a54075b01",
     };
-    let mockToken = "5c0157fd3ff47a2a54075b02";
     let mockInstitute = {
         instituteName: "Singapore University of Technology and Design",
         instituteAcronym: "SUTD",
@@ -38,7 +39,7 @@ contract("Certification", (accounts) => {
         // Load Contracts
         institution = await Institution.new({ from: mockOwnerAcc });
         const receipt = await institution.addInstitute(
-            mockToken,
+            mockInstituteAcc,
             mockInstitute.instituteName,
             mockInstitute.instituteAcronym,
             mockInstitute.instituteLink,
@@ -57,12 +58,11 @@ contract("Certification", (accounts) => {
     describe("Generation of Certificate", async() => {
         it("generates a certificate with a valid unique id", async() => {
             const receipt = await certification.generateCertificate(
-                mockToken,
                 mockCert.id,
                 mockCert.candidateName,
                 mockCert.orgName,
                 mockCert.courseName,
-                mockCert.expirationDate, { from: mockOwnerAcc }
+                mockCert.expirationDate, { from: mockInstituteAcc }
             );
             assert.equal(receipt.logs.length, 1, "an event was not triggered");
             assert.equal(
@@ -76,17 +76,15 @@ contract("Certification", (accounts) => {
                 "the certificate id is incorrect"
             );
         });
-        it("fails if token provided is invalid", async() => {
-            const invalidToken = "invalidc0157fd3ff47a2a54075b02";
+        it("fails if institute address (current account sender) is invalid", async() => {
             try {
-                // generated certificate with invalid token - should fail
+                // generated certificate with invalid sender account - should fail
                 const receipt = await certification.generateCertificate(
-                    invalidToken,
                     mockCert.id,
                     mockCert.candidateName,
                     mockCert.orgName,
                     mockCert.courseName,
-                    mockCert.expirationDate, { from: mockOwnerAcc }
+                    mockCert.expirationDate, { from: mockInvalidAcc }
                 );
                 const failure = assert.fail(receipt);
             } catch (err) {
@@ -99,22 +97,20 @@ contract("Certification", (accounts) => {
         it("fails if certificate id already exists", async() => {
             const certification2 = await Certification.new(institution.address);
             const receipt = await certification2.generateCertificate(
-                mockToken,
                 mockCert.id,
                 mockCert.candidateName,
                 mockCert.orgName,
                 mockCert.courseName,
-                mockCert.expirationDate, { from: mockOwnerAcc }
+                mockCert.expirationDate, { from: mockInstituteAcc }
             );
             try {
                 // generated certificate with same id again - should fail
                 const receipt = await certification2.generateCertificate(
-                    mockToken,
                     mockCert.id,
                     mockCert.candidateName,
                     mockCert.orgName,
                     mockCert.courseName,
-                    mockCert.expirationDate, { from: mockOwnerAcc }
+                    mockCert.expirationDate, { from: mockInstituteAcc }
                 );
                 const failure = assert.fail(certData);
             } catch (err) {
