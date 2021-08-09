@@ -66,7 +66,9 @@ class GenerateCert extends React.Component {
         // let instituteAddress = "0x83E41c66E7EE0f14d0Fc8E74720652F6662eB1Eb"
 
         // to be changed to not having address
-        let instituteAddress = "0x6a4Fc583Da50EB7Fc46A468C2a3A14fAC62b1833"
+        // copy over the institute address that you added
+
+        let instituteAddress = "0xeE20bE5570B7b6f5Ba9C164Aace6cC42249b8346"
         try {
 
             await institution.methods.getInstituteData(instituteAddress).call().then(res => {
@@ -179,13 +181,17 @@ class GenerateCert extends React.Component {
                 <button onClick={() => this.checkAddressAndGetCourses()}>
                     Get courses
                 </button>
-                <h1>{instituteName}</h1>
-                <h1>{instituteAcronym}</h1>
-                <h1>{instituteWebsite}</h1>
+
                 {/*need to pipe properly, but the data is in instituteCourses*/}
                 {/* <h1>{instituteCourses}</h1> */}
                 {isLegitInstitute ?
                     <>
+                        <h1>instituteName</h1>
+                        <h1>{instituteName}</h1>
+                        <h1>instituteAcronym</h1>
+                        <h1>{instituteAcronym}</h1>
+                        <h1>instituteWebsite</h1>
+                        <h1>{instituteWebsite}</h1>
                         <TextField
                             // add a error function to ensure they don't submit empty strings
                             // error={error}
