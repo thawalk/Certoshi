@@ -74,10 +74,10 @@ function CertificateDisplay(){
       candidateName: "",
       courseName: "",
       creationDate: null,
-      expirationDate: null,
       instituteName: "",
       instituteAcronym: "",
       instituteLink: "",
+      revoked: null,
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/FOSSASIA_Logo.svg/600px-FOSSASIA_Logo.svg.png"
     }
     const [certData, setCertData] = useState(certTemplate)
@@ -128,11 +128,11 @@ function CertificateDisplay(){
             setCertData((prev)=>({...prev,
                 candidateName: data[0],
                 courseName: data[1],
-                creationDate: null,
-                expirationDate: data[2]['c'][0], // note that this is a integer e.g. 1628627980432
+                creationDate: data[2]['c'][0], // note that this is a integer e.g. 1628627980432
                 instituteName: data[3],
                 instituteAcronym: data[4],
-                instituteLink: data[5]
+                instituteLink: data[5],
+                revoked: data[6]
             }))
             setVerified(true)
             setLoading(false)
@@ -160,22 +160,26 @@ function CertificateDisplay(){
                     <>
                     {/* You can render the certificate details in this Certificate component */}
                    {/* <Certificate
-                        name={certData.candidateName}
-                        title={certData.courseName}
+                        id={id}
+                        candidateName={certData.candidateName}
+                        courseName={certData.courseName}
                         creationDate={certData.creationDate}
-                        expirationDate={certData.expirationDate}
-                        hash={id}
+                        instituteName={certData.instituteName}
+                        instituteAcronym={certData.instituteAcronym}
+                        instituteLink={certData.instituteLink}
+                        revoked={certData.revoked}
                         logo={certData.logo}/> */}
                     <Paper className={classes.paper}>
                         <p>Congrats, this cert exists and is verified!</p>
                         <p>Below are the cert details:</p>
-                        <p>cert id: {id}</p>
-                        <p>{certData.candidateName}</p>
-                        <p>{certData.courseName}</p>
-                        <p>{certData.expirationDate}</p>
-                        <p>{certData.instituteName}</p>
-                        <p>{certData.instituteAcronym}</p>
-                        <p>{certData.instituteLink}</p>
+                        <p>id: {id}</p>
+                        <p>candidateName: {certData.candidateName}</p>
+                        <p>courseName: {certData.courseName}</p>
+                        <p>creationDate: {certData.creationDate}</p>
+                        <p>instituteName: {certData.instituteName}</p>
+                        <p>instituteAcronym: {certData.instituteAcronym}</p>
+                        <p>instituteLink: {certData.instituteLink}</p>
+                        <p>revoked: {certData.revoked? "true": "false"}</p>
                     </Paper>
                     </>
                 )
