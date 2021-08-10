@@ -2,7 +2,6 @@ const chalk = require('chalk');
 const Institution = artifacts.require('Institution')
 const Certification = artifacts.require('Certification')
 
-const mockToken = "52a9a2f8-a2e6-45ed-a0bc-ac6d4e173963"; // must use the same one used to create institute
 const mockCert = {
     candidateName: "John Lim",
     orgName: "Singapore University of Technology and Design",
@@ -14,31 +13,35 @@ const mockCert = {
 // Utility function to create Institute easily
 module.exports = async function(callback){
     // Set Up
-    console.log(chalk.blue("==== Creating new Institute ===="))
+    console.log(chalk.blue("==== Connecting to deployed Institution Contract ===="))
     let institution = await Institution.deployed()
     console.log(chalk.green("===> Institute Contract Present"))
-    let instituteContractOwner = await institution.owner()
-    console.log("Owner of contract:", instituteContractOwner)
+    let institutionContractAddress = await institution.address
+    console.log("Contract address:", institutionContractAddress)
+    let institutionContractOwner = await institution.owner()
+    console.log("Owner of contract:", institutionContractOwner)
     
+    console.log(chalk.blue("==== Connecting to deployed Certification Contract ===="))
     let certification = await Certification.deployed();
     console.log(chalk.green("===> Certification Contract Present"))
+    let certificationContractAddress = await certification.address
+    console.log("Contract address:", certificationContractAddress)
     let certificationContractOwner = await certification.owner()
     console.log("Owner of contract:", certificationContractOwner)
     
     let accounts = await web3.eth.getAccounts()
-    const chosenAcc = accounts[1]
-    console.log("Using this account to generate certificate:", chosenAcc)
+    const mockInstituteAcc = accounts[1]
 
     // Add certificate into Certification Contract
     try {
+        console.log(chalk.cyan("Generating certificate:", mockCert.id, "(id)", "| With institute account:", mockInstituteAcc))
         const receipt = await certification.generateCertificate(
-            mockToken,
             mockCert.id,
             mockCert.candidateName,
-            mockCert.orgName,
             mockCert.courseName,
-            mockCert.expirationDate, { from: chosenAcc }
+            mockCert.expirationDate, { from: mockInstituteAcc }
         );
+
         // Some checks:
         if (receipt.logs.length != 1){
             throw "an event was not triggered"
@@ -50,11 +53,11 @@ module.exports = async function(callback){
             throw "the certificate id is incorrect"
         }
 
-        console.log(chalk.green("===> Certificate added!"))
+        console.log(chalk.bgGreen("===> Certificate added!"))
         console.log("_certificateId:", receipt.logs[0].args._certificateId)
 
     } catch(err){
-        console.log(chalk.red("Something went wrong, check error message below:"))
+        console.log(chalk.bgRed("Something went wrong, check error message below:"))
         console.log(err)
     }
     callback()

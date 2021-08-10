@@ -47,19 +47,20 @@ class Admin extends React.Component {
         try {
             const accounts = await web3.eth.getAccounts()
             let caller = accounts[0]
-
+            console.log("caller",caller)
             const networkId = await web3.eth.net.getId()
-
+            console.log("networkId",networkId)
             // Load institution contract
             const institutionData = Institution.networks[networkId]
             if (institutionData) {
                 // create a web3 version of the contract
                 const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
+                console.log("institution",institution)
                 this.setState({ institution })
                 try {
                     // get owner of smart contract
                     let smartContractOwner = await institution.methods.owner().call()
-
+                    console.log("smartContractOwner",smartContractOwner)
                     // compare the caller and the owner of smart contract
                     if (caller == smartContractOwner) {
                         // give access to the page
@@ -79,7 +80,7 @@ class Admin extends React.Component {
                     }
                 }
                 catch (error) {
-                    console.log(error)
+                    console.log("error is",error)
                 }
             }
             else {
