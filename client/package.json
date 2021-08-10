@@ -18,6 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:testnet": "cross-env REACT_APP_STAGE=testnet react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
