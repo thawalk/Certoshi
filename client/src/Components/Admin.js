@@ -275,7 +275,7 @@ render() {
                         // error={error}
                         autoFocus
                         margin="dense"
-                        id="address"
+                        id="name"
                         label="Institute Name"
                         type="name"
                         value={instituteName}
@@ -288,7 +288,7 @@ render() {
                         // error={error}
                         autoFocus
                         margin="dense"
-                        id="address"
+                        id="acryonm"
                         label="Institute Acronym"
                         type="name"
                         value={instituteAcronym}
@@ -301,7 +301,7 @@ render() {
                         // error={error}
                         autoFocus
                         margin="dense"
-                        id="address"
+                        id="website"
                         label="Institute Website"
                         type="name"
                         value={instituteWebsite}
@@ -314,7 +314,7 @@ render() {
                         // error={error}
                         autoFocus
                         margin="dense"
-                        id="address"
+                        id="course"
                         label="Add course"
                         type="name"
                         fullWidth
