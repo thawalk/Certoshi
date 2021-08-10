@@ -221,14 +221,12 @@ contract("Institution", (accounts) => {
     describe("Checking of Institute Permission in Institute Contract", async() => {
         it("returns true for a valid institute address", async() => {
             const result = await institution.checkInstitutePermission(mockInstituteAcc);
-            console.log(result);
             assert.equal(result, true);
         });
 
         it("returns false for a invalid institute address", async() => {
             const invalidAddress = "0x772394da93d6EbF5d4985E49ae3404a3DEE8243a";
             const result = await institution.checkInstitutePermission(invalidAddress);
-            console.log(result);
             assert.equal(result, false);
         });
     });
