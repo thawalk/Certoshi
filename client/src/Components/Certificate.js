@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 function Certificate(props) {
-  const { title, name, date, hash, logo } = props;
+  const { title, name, creationDate, expirationDate, hash, logo } = props;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +46,7 @@ function Certificate(props) {
         on
       </text>
       <text x="500" y="500" text-anchor="middle" fill="black" id="date">
-        {date}
+        {creationDate}
       </text>
       <line x1="400" y1="510" x2="600" y2="510" id="titleUnderLine" />
       <text x="100" y="575" text-anchor="start" fill="black" id="hash">
@@ -68,7 +68,8 @@ function Certificate(props) {
 Certificate.propTypes = {
     name: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired,
+    creationDate: PropTypes.string.isRequired,
+    expirationDate: PropTypes.string.isRequired,
     logo: PropTypes.string.isRequired,
     hash: PropTypes.string.isRequired,
 }

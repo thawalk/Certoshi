@@ -73,7 +73,7 @@ function CertificateDisplay(){
     const certTemplate = {
       candidateName: "",
       courseName: "",
-      assignDate: null,
+      creationDate: null,
       expirationDate: null,
       instituteName: "",
       instituteAcronym: "",
@@ -128,7 +128,7 @@ function CertificateDisplay(){
             setCertData((prev)=>({...prev,
                 candidateName: data[0],
                 courseName: data[1],
-                assignDate: null,
+                creationDate: null,
                 expirationDate: data[2]['c'][0], // note that this is a integer e.g. 1628627980432
                 instituteName: data[3],
                 instituteAcronym: data[4],
@@ -162,7 +162,7 @@ function CertificateDisplay(){
                    {/* <Certificate
                         name={certData.candidateName}
                         title={certData.courseName}
-                        assignDate={certData.assignDate}
+                        creationDate={certData.creationDate}
                         expirationDate={certData.expirationDate}
                         hash={id}
                         logo={certData.logo}/> */}
