@@ -1,6 +1,8 @@
 pragma solidity >=0.4.24;
 pragma experimental ABIEncoderV2;
 
+import "./Certification.sol";
+
 contract Institution {
     // State Variables
     address public owner;
@@ -41,7 +43,6 @@ contract Institution {
         }
     }
 
-    // Note: Token 
     function addInstitute(
         address _address,
         string memory _institute_name,
@@ -72,6 +73,32 @@ contract Institution {
         emit instituteAdded(_institute_name);
     }
 
+    // Called by Institutions
+    function getInstituteData()
+        public
+        view
+        returns (
+            string memory,
+            string memory,
+            string memory,
+            Course[] memory
+        )
+    {
+        Institute memory temp = institutes[msg.sender];
+        bytes memory tempEmptyStringNameTest = bytes(temp.institute_name);
+        require(
+            tempEmptyStringNameTest.length > 0,
+            "Institute account does not exist!"
+        );
+        return (
+            temp.institute_name,
+            temp.institute_acronym,
+            temp.institute_link,
+            instituteCourses[msg.sender]
+        );
+    }
+
+    // Called by Smart Contracts
     function getInstituteData(address _address)
         public
         view
@@ -82,6 +109,7 @@ contract Institution {
             Course[] memory
         )
     {
+        require(Certification(msg.sender).owner() == owner, "Incorrect smart contract & authorizations!");
         Institute memory temp = institutes[_address];
         bytes memory tempEmptyStringNameTest = bytes(temp.institute_name);
         require(

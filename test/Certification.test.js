@@ -74,7 +74,7 @@ contract("Certification", (accounts) => {
                 "the certificate id is incorrect"
             );
         });
-        it("fails if institute address (current account sender) is invalid", async() => {
+        it("fails if function is called by an invalid institute account", async() => {
             try {
                 // generated certificate with invalid sender account - should fail
                 const receipt = await certification.generateCertificate(
@@ -117,7 +117,7 @@ contract("Certification", (accounts) => {
         });
     });
     describe("Data Retrieval for Certificate data", async() => {
-        it("retrieves correct data from a valid certificate id", async() => {
+        it("retrieves correct data for a valid certificate id", async() => {
             const certData = await certification.getData(mockCert.id);
 
             // Individual Info
