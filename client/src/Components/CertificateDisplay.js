@@ -92,7 +92,7 @@ function CertificateDisplay(){
         if (process.env.NODE_ENV === "development" && process.env.REACT_APP_STAGE !== "testnet") {
             web3 = new Web3(new Web3.providers.HttpProvider(process.env.REACT_APP_LOCAL_ENDPOINT));
         } else {
-            web3 = new Web3(new HDWalletProvider(process.env.REACT_APP_MNEMONIC, process.env.REACT_APP_INFURA_PROJECT_ENDPOINT));
+            web3 = new Web3(new HDWalletProvider(null, process.env.REACT_APP_INFURA_PROJECT_ENDPOINT));
         }
         CertificationInstance.setProvider(web3.currentProvider);
         // hack for web3@1.0.0 support for localhost testrpc, see https://github.com/trufflesuite/truffle-contract/issues/56#issuecomment-331084530
