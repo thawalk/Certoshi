@@ -1,7 +1,6 @@
 const chalk = require('chalk');
 const Institution = artifacts.require('Institution')
 
-const mockToken = "52a9a2f8-a2e6-45ed-a0bc-ac6d4e173963";
 const mockInstitute = {
     instituteName: "Singapore University of Technology and Design",
     instituteAcronym: "SUTD",
@@ -24,20 +23,23 @@ const mockInstituteCourses = [{
 // Utility function to create Institute easily
 module.exports = async function(callback){
     // Set Up
-    console.log(chalk.blue("==== Creating new Institute ===="))
+    console.log(chalk.blue("==== Connecting to deployed Institution Contract ===="))
     let institution = await Institution.deployed()
     console.log(chalk.green("===> Institute Contract Present"))
-    let instituteContractOwner = await institution.owner()
-    console.log("Owner of contract:", instituteContractOwner)
+    let institutionContractAddress = await institution.address
+    console.log("Contract address:", institutionContractAddress)
+    let institutionContractOwner = await institution.owner()
+    console.log("Owner of contract:", institutionContractOwner)
 
     let accounts = await web3.eth.getAccounts()
     const currentOwnerAcc = accounts[0]
-
-
+    const mockInstituteAcc = accounts[1]
+    
     // Add mock Institute into Institute Contract
     try {
+        console.log(chalk.cyan("Adding Institute Acc:", mockInstituteAcc, "| With account:", currentOwnerAcc))
         const receipt = await institution.addInstitute(
-        mockToken,
+        mockInstituteAcc,
         mockInstitute.instituteName,
         mockInstitute.instituteAcronym,
         mockInstitute.instituteLink,
@@ -54,10 +56,10 @@ module.exports = async function(callback){
         if (receipt.logs[0].args._instituteName != mockInstitute.instituteName){
             throw "the institution name is incorrect"
         }
-        console.log(chalk.green("===> Institute added!"))
+        console.log(chalk.bgGreen("===> Institute added!"))
 
     } catch(err){
-        console.log(chalk.red("Something went wrong, check error message below:"))
+        console.log(chalk.bgRed("Something went wrong, check error message below:"))
         console.log(err)
     }
     callback()
