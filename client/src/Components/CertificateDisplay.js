@@ -1,218 +1,417 @@
-import React, {useState, useEffect} from "react";
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 //Decrypt Function (Utility Function)
-import { decrypt } from './decrypt' 
+import { decrypt } from "./decrypt";
 
 // Internal Components
-import Certificate from "./Certificate";
 import VerifyBadge from "./VerifyBadge";
 import Loader from "./Loader";
 
 // Material UI Components
-import { makeStyles } from "@material-ui/core/styles";
+import {
+  Button,
+  Box,
+  useMediaQuery,
+  DialogTitle,
+  Dialog,
+  DialogActions,
+  DialogContent,
+} from "@material-ui/core";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
+import CancelIcon from "@material-ui/icons/Cancel";
+// import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 // Smart Contract essentials
-import Web3 from 'web3'
-import HDWalletProvider from "truffle-hdwallet-provider"
+import Web3 from "web3";
+import HDWalletProvider from "truffle-hdwallet-provider";
 import contract from "truffle-contract";
-import Certification from '../contracts/Certification.json'
+import Certification from "../contracts/Certification.json";
 const CertificationInstance = contract(Certification);
-
-
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minHeight: "91.5vh"
+    padding: "30px",
+    minHeight: "91.5vh",
+    lineHeight: "1.5",
+  },
+  certHeader: {
+    backgroundColor: "white",
+    background: "linear-gradient(109.96deg,#363e98,#8ac6ff),#fff",
+    padding: "24px",
+    borderRadius: "10px 10px 0 0 ",
+    fontSize: "24px",
+    fontWeight: "400",
+    color: "white",
+  },
+  certTopSection: {
+    backgroundColor: "white",
+    padding: "24px",
+  },
+  certMidSection: {
+    backgroundColor: "white",
+    padding: "24px",
+    borderTop: "1px solid #6066af",
+    borderBottom: "1px solid #6066af",
+  },
+  certBottomSection: {
+    backgroundColor: "white",
+    padding: "24px",
+    borderRadius: "0 0 10px 10px",
   },
   paper: {
-    [theme.breakpoints.down("sm")]: {
-      padding: `${theme.spacing.unit * 2}px`,
-      margin: theme.spacing.unit * 2
-    },
-    minHeight: "75vh",
-    maxWidth: "95%",
-    margin: theme.spacing.unit * 5,
-    display: "flex",
+    // minHeight: "75vh",
+    // display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    padding: `${theme.spacing.unit * 4}px ${theme.spacing.unit * 8}px ${theme
-      .spacing.unit * 3}px`
-  },
-  rightpaper: {
-    [theme.breakpoints.up("sm")]: {
-      maxHeight: "75vh"
-    },
-    [theme.breakpoints.down("sm")]: {
-      maxWidth: "95%",
-      margin: theme.spacing.unit * 2
-    },
-    maxWidth: "60%",
-    minWidth: "60%",
-    margin: theme.spacing.unit * 5,
-    display: "flex",
-    flexDirection: "column",
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
-      .spacing.unit * 3}px`
+    padding: "0px",
+    borderRadius: "10px",
   },
   verificationBox: {
-    display: "flex",
-    flexDirection: "column",
+    backgroundColor: (props) => (props.revoked ? "#dd7e7e" : "#7ed7dd"),
+    //   background: "linear-gradient(90deg, rgba(126,215,221,1) 0%, rgba(126,221,214,1) 100%);",
+    borderRadius: "5px 0 0 5px",
+    marginRight: "-24px",
+    padding: "12px 8px",
     alignItems: "center",
-    justifyItems: "center",
-    height: "100%",
-    marginTop: theme.spacing.unit * 3
   },
-  textitems: {
-    margin: "20px 10px",
-    textAlign: "center"
-  }
-  
+  verificationStatus: {
+    fontSize: "22px",
+    lineHeight: "20px",
+    fontWeight: "600",
+    color: "white",
+  },
 }));
 
-function CertificateDisplay(){
-    const certTemplate = {
-      candidateName: "",
-      courseName: "",
-      creationDate: null,
-      instituteName: "",
-      instituteAcronym: "",
-      instituteLink: "",
-      revoked: null,
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/FOSSASIA_Logo.svg/600px-FOSSASIA_Logo.svg.png"
+function CertificateDisplay() {
+  const certTemplate = {
+    candidateName: "",
+    courseName: "",
+    creationDate: null,
+    instituteName: "",
+    instituteAcronym: "",
+    instituteLink: "",
+    revoked: null,
+    logo:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/FOSSASIA_Logo.svg/600px-FOSSASIA_Logo.svg.png",
+  };
+  const [certData, setCertData] = useState(certTemplate);
+  const [loading, setLoading] = useState(true);
+  const [verified, setVerified] = useState(null);
+  let { id } = useParams();
+  const classes = useStyles();
+
+  let web3;
+  const connectWeb3 = () => {
+    if (
+      process.env.NODE_ENV === "development" &&
+      process.env.REACT_APP_STAGE !== "testnet"
+    ) {
+      web3 = new Web3(
+        new Web3.providers.HttpProvider(process.env.REACT_APP_LOCAL_ENDPOINT)
+      );
+    } else {
+      web3 = new Web3(
+        new HDWalletProvider(
+          null,
+          process.env.REACT_APP_INFURA_PROJECT_ENDPOINT
+        )
+      );
     }
-    const [certData, setCertData] = useState(certTemplate)
-    const [loading, setLoading] = useState(true)
-    const [verified, setVerified] = useState(null)
-    let { id } = useParams();
-    const classes = useStyles();
+    CertificationInstance.setProvider(web3.currentProvider);
+    // hack for web3@1.0.0 support for localhost testrpc, see https://github.com/trufflesuite/truffle-contract/issues/56#issuecomment-331084530
+    if (typeof CertificationInstance.currentProvider.sendAsync !== "function") {
+      CertificationInstance.currentProvider.sendAsync = function() {
+        return CertificationInstance.currentProvider.send.apply(
+          CertificationInstance.currentProvider,
+          arguments
+        );
+      };
+    }
 
+    if (
+      process.env.NODE_ENV === "development" &&
+      process.env.REACT_APP_STAGE !== "testnet"
+    ) {
+      console.log("Current host: " + web3.currentProvider.host);
+    } else {
+      console.log(
+        "Current host: " +
+          web3.currentProvider.engine._providers[2].provider.host
+      );
+    }
+  };
 
-    let web3
-    const connectWeb3 = () => {
-        if (process.env.NODE_ENV === "development" && process.env.REACT_APP_STAGE !== "testnet") {
-            web3 = new Web3(new Web3.providers.HttpProvider(process.env.REACT_APP_LOCAL_ENDPOINT));
-        } else {
-            web3 = new Web3(new HDWalletProvider(null, process.env.REACT_APP_INFURA_PROJECT_ENDPOINT));
-        }
-        CertificationInstance.setProvider(web3.currentProvider);
-        // hack for web3@1.0.0 support for localhost testrpc, see https://github.com/trufflesuite/truffle-contract/issues/56#issuecomment-331084530
-        if (typeof CertificationInstance.currentProvider.sendAsync !== "function") {
-            CertificationInstance.currentProvider.sendAsync = function() {
-                return CertificationInstance.currentProvider.send.apply(CertificationInstance.currentProvider,arguments);
-            };
-        }
+  const getCertificateData = (certificateId) => {
+    CertificationInstance.setProvider(web3.currentProvider);
+    return CertificationInstance.deployed()
+      .then((ins) => ins.getData(certificateId))
+      .catch((err) => {
+        console.log(err);
+        Promise.reject("No certificate found with the input id");
+      });
+  };
 
-        if (process.env.NODE_ENV === "development" && process.env.REACT_APP_STAGE !== "testnet") {
-            console.log("Current host: " + web3.currentProvider.host)
-        }else{
-            console.log("Current host: " + web3.currentProvider.engine._providers[2].provider.host);
-        }
-    };
-
-    const getCertificateData = (certificateId) => {
-        CertificationInstance.setProvider(web3.currentProvider);
-        return CertificationInstance.deployed()
-        .then(ins => ins.getData(certificateId))
-        .catch(err => {
-            console.log(err)
-            Promise.reject("No certificate found with the input id")
-        });
-    };
-
-    useEffect(async () =>{
-        console.log(process.env.REACT_APP_STAGE)
-        console.log(process.env.NODE_ENV)
-        console.log(process.env.REACT_APP_INFURA_PROJECT_ENDPOINT)
-        connectWeb3()
-        getCertificateData(id).then((data)=>{
-            console.log("Here's the retrieved certificate data of id", id)    
-            console.log(data)
-            setCertData((prev)=>({...prev,
-                candidateName: decrypt(data[0], id),
-                courseName: data[1],
-                creationDate: decrypt(data[2], id), // note that this is a integer e.g. 1628627980432
-                instituteName: data[3],
-                instituteAcronym: data[4],
-                instituteLink: data[5],
-                revoked: data[6]
-            }))
-            setVerified(true)
-            setLoading(false)
-        }).catch((err)=>{
-            console.log("Certificate of id", id, "does not exist")
-            setVerified(false)
-            setLoading(false)
-        })
-        
-    },[])
-    return(
-        <>
-         <Grid container className={classes.root}>
+  useEffect(async () => {
+    console.log(process.env.REACT_APP_STAGE);
+    console.log(process.env.NODE_ENV);
+    console.log(process.env.REACT_APP_INFURA_PROJECT_ENDPOINT);
+    connectWeb3();
+    getCertificateData(id)
+      .then((data) => {
+        console.log("Here's the retrieved certificate data of id", id);
+        console.log(data);
+        setCertData((prev) => ({
+          ...prev,
+          candidateName: decrypt(data[0], id),
+          courseName: data[1],
+          creationDate: decrypt(data[2], id),
+          instituteName: data[3],
+          instituteAcronym: data[4],
+          instituteLink: data[5],
+          revoked: data[6],
+        }));
+        setVerified(true);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("Certificate of id", id, "does not exist");
+        setVerified(false);
+        setLoading(false);
+      });
+  }, []);
+  return (
+    <>
+      <Grid container className={classes.root} justifyContent="center">
         <Grid item xs={12} sm={8}>
-            {
-                loading && (<Loader SIZE={170} />)
-            }
-            {
-                !loading && !verified && (
-                    <p>This certificate id {id} does not exist!</p>
-                )
-            }
-            {
-                !loading && verified && (
-                    <>
-                    {/* You can render the certificate details in this Certificate component */}
-                   {/* <Certificate
-                        id={id}
-                        candidateName={certData.candidateName}
-                        courseName={certData.courseName}
-                        creationDate={certData.creationDate}
-                        instituteName={certData.instituteName}
-                        instituteAcronym={certData.instituteAcronym}
-                        instituteLink={certData.instituteLink}
-                        revoked={certData.revoked}
-                        logo={certData.logo}/> */}
-                    <Paper className={classes.paper}>
-                        <p>Congrats, this cert exists and is verified!</p>
-                        <p>Below are the cert details:</p>
-                        <p>id: {id}</p>
-                        <p>candidateName: {certData.candidateName}</p>
-                        <p>courseName: {certData.courseName}</p>
-                        <p>creationDate: {certData.creationDate}</p>
-                        <p>instituteName: {certData.instituteName}</p>
-                        <p>instituteAcronym: {certData.instituteAcronym}</p>
-                        <p>instituteLink: {certData.instituteLink}</p>
-                        <p>revoked: {certData.revoked? "true": "false"}</p>
-                    </Paper>
-                    </>
-                )
-            } 
+          {loading && <Loader SIZE={170} />}
+          {!loading && !verified && (
+            <p>This certificate id {id} does not exist!</p>
+          )}
+          {!loading && verified && (
+            <>
+              <Certificate
+                id={id}
+                candidateName={certData.candidateName}
+                courseName={certData.courseName}
+                creationDate={certData.creationDate}
+                instituteName={certData.instituteName}
+                instituteAcronym={certData.instituteAcronym}
+                instituteLink={certData.instituteLink}
+                revoked={certData.revoked}
+                logo={certData.logo}
+              />
+            </>
+          )}
         </Grid>
-        {!loading && verified && (
-            <Grid item xs={12} sm={4}>
-                <Paper className={classes.rightpaper}>
-                <Grid container className={classes.verificationBox}>
-                    <Grid item sm={12}>
-                        <VerifyBadge />
-                            <Typography
-                            variant="subtitle1"
-                            className={classes.textitems}
-                            >
-                            This certificate is Blockchain Verified
-                            </Typography>
-                    </Grid>
-                </Grid>
-                </Paper>
-            </Grid>
-        )}
-        
       </Grid>
-        </>
-    )
+    </>
+  );
 }
 
 export default CertificateDisplay;
+
+function SimpleDialog(props) {
+  const { onClose, open, selectedValue, revoked } = props;
+
+  const handleClose = () => {
+    onClose(selectedValue);
+  };
+
+  return (
+    <Dialog
+      onClose={handleClose}
+      aria-labelledby="simple-dialog-title"
+      open={open}
+    >
+      {!revoked && (
+        <>
+          <DialogTitle id="simple-dialog-title">
+            What are Verified Credentials?
+          </DialogTitle>
+          <DialogContent>
+            <Box>
+              Verified Credentials (VC) are tamper-proof credentials that can be
+              verified cryptographically.
+            </Box>
+            <Box m={2} />
+            <Box>
+              There are three essential components of verifiable credentials,
+              and they are:
+            </Box>
+            <Box>✔️ It is machine verifiable</Box>
+            <Box>✔️ It is secure and tamper-proof</Box>
+            <Box>✔️ Has been issued by a competent authority.</Box>
+          </DialogContent>
+        </>
+      )}
+
+      {revoked && (
+        <>
+          <DialogTitle id="simple-dialog-title">
+            What are ❌ Revoked Credentials?
+          </DialogTitle>
+          <DialogContent>
+            <Box>
+              Verified Credentials (VC) are tamper-proof credentials that can be
+              verified cryptographically.
+            </Box>
+            <Box m={2} />
+            <Box>
+              There are three essential components of verifiable credentials,
+              and they are:
+            </Box>
+            <Box>➤ It is machine verifiable</Box>
+            <Box>➤ It is secure and tamper-proof</Box>
+            <Box>➤ Has been issued by a competent authority.</Box>
+            <Box m={3} />
+            <Box>
+              ❌ Revoked Credentials are credentials that are no longer valid
+              due to one or more of the following reasons:
+            </Box>
+            <Box>
+              ➤ Candidate has been found to be dishonest while obtaining the
+              credential, and credential has been revoked by institute
+            </Box>
+            <Box>➤ Credential has been issued wrongly by institute</Box>
+          </DialogContent>
+        </>
+      )}
+      <DialogActions>
+        <Button onClick={handleClose} color="primary" autoFocus>
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+const VerificationStatus = (props) => {
+  const classes = useStyles(props);
+  const theme = useTheme();
+  const sm = useMediaQuery(theme.breakpoints.up("md"));
+
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = (value) => {
+    setOpen(false);
+  };
+  return (
+    <>
+      <SimpleDialog open={open} onClose={handleClose} revoked={props.revoked} />
+      <Box
+        className={classes.verificationBox}
+        display="flex"
+        onClick={handleClickOpen}
+      >
+        {props.revoked ? <CancelIcon fontSize="large" /> : <VerifyBadge />}
+
+        {sm && (
+          <Box marginLeft="10px">
+            <Box className={classes.verificationStatus}>
+              {props.revoked ? "Revoked" : "Verified"}
+            </Box>
+            <a
+              href="javascript:void(0)"
+              style={{ color: "white", fontSize: "12px" }}
+            >
+              What does this mean?
+            </a>
+          </Box>
+        )}
+      </Box>
+    </>
+  );
+};
+
+const DetailGroup = (props) => {
+  return (
+    <>
+      <Box>
+        <Box fontSize={16} fontWeight={500} color="#363b98">
+          {props.label}
+        </Box>
+        <Box m={1} />
+        <Box fontSize={18} fontWeight={600} color="#3a3a3a">
+          {props.content}
+        </Box>
+        <Box m={3} />
+      </Box>
+    </>
+  );
+};
+
+function Certificate({
+  id,
+  candidateName,
+  courseName,
+  creationDate,
+  instituteName,
+  instituteAcronym,
+  instituteLink,
+  revoked,
+  logo,
+}) {
+  const classes = useStyles();
+  const dateObject = new Date(creationDate);
+  const day = dateObject.toLocaleString("en-US", { day: "numeric" });
+  const month = dateObject.toLocaleString("en-US", { month: "long" });
+  const year = dateObject.toLocaleString("en-US", { year: "numeric" });
+  const dateString = `${day} ${month} ${year}`;
+  return (
+    <>
+      <Paper className={classes.paper}>
+        <Grid container>
+          <Grid item xs={12} className={classes.certHeader}>
+            University Credential
+          </Grid>
+
+          <Grid item xs={12} className={classes.certTopSection}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="space-between"
+              alignItems="flex-start"
+            >
+              <Grid item>
+                <DetailGroup label="Student Name" content={candidateName} />
+              </Grid>
+              <Grid item>
+                <VerificationStatus revoked={revoked} />
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12} className={classes.certMidSection}>
+            <Grid container>
+              <Grid item xs={12} lg={6}>
+                <DetailGroup label="Course Name" content={courseName} />
+              </Grid>
+              <Grid item xs={12} lg={6}>
+                <DetailGroup label="Institute Name" content={instituteName} />
+              </Grid>
+              <Grid item xs={12} lg={6}>
+                <DetailGroup
+                  label="Institute Acronym"
+                  content={instituteAcronym}
+                />
+              </Grid>
+              <Grid item xs={12} lg={6}>
+                <DetailGroup label="Institute Link" content={instituteLink} />
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item sm={12} className={classes.certBottomSection}>
+            <DetailGroup label="Issuance Date" content={dateString} />
+          </Grid>
+        </Grid>
+      </Paper>
+    </>
+  );
+}
