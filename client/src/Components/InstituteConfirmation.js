@@ -65,10 +65,10 @@ class InstituteConfirmation extends Component {
                 InstituteConfirmation
               </Typography>
               <Typography component="h1" variant="h5">
-                Institute Name : .......
+                Institute Name : {this.props.location.state.instituteName}
               </Typography>
               <Typography component="h1" variant="h5">
-                Acronym : ......
+                Acronym : {this.props.location.state.in}
               </Typography>
               <Typography component="h1" variant="h5">
                 Courses : .....
