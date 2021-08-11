@@ -100,7 +100,7 @@ function CertificateDisplay() {
   };
   const [certData, setCertData] = useState(certTemplate);
   const [loading, setLoading] = useState(true);
-  const [verified, setVerified] = useState(null);
+  const [certExists, setCertExists] = useState(null);
   let { id } = useParams();
   const classes = useStyles();
 
@@ -151,7 +151,7 @@ function CertificateDisplay() {
       .then((ins) => ins.getData(certificateId))
       .catch((err) => {
         console.log(err);
-        Promise.reject("No certificate found with the input id");
+        return Promise.reject("No certificate found with the input id");
       });
   };
 
@@ -174,12 +174,12 @@ function CertificateDisplay() {
           instituteLink: data[5],
           revoked: data[6],
         }));
-        setVerified(true);
+        setCertExists(true);
         setLoading(false);
       })
       .catch((err) => {
         console.log("Certificate of id", id, "does not exist");
-        setVerified(false);
+        setCertExists(false);
         setLoading(false);
       });
   }, []);
@@ -188,10 +188,10 @@ function CertificateDisplay() {
       <Grid container className={classes.root} justifyContent="center">
         <Grid item xs={12} sm={8}>
           {loading && <Loader SIZE={170} />}
-          {!loading && !verified && (
+          {!loading && !certExists && (
             <p>This certificate id {id} does not exist!</p>
           )}
-          {!loading && verified && (
+          {!loading && certExists && (
             <>
               <Certificate
                 id={id}
