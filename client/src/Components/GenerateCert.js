@@ -101,6 +101,12 @@ class GenerateCert extends React.Component {
             courseName: "Computer Science and Design",
             creationDate: new Date().getTime(),
             id: "5c0157fd3ff47a2a54075b01",
+            /*
+                mockCert.id,
+                mockCert.candidateName,
+                mockCert.courseName,
+                mockCert.creationDate, { from: mockInstituteAcc }
+            */
         };
         //------------ mock data end-----------------//
 
@@ -142,11 +148,6 @@ class GenerateCert extends React.Component {
         })
     }
 
-    decrypt(encryptedData, certId) {
-        let bytes = CryptoJS.AES.decrypt(encryptedData, certId + process.env.REACT_APP_SALT);
-        return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    }
-
 
     render() {
         const {
@@ -166,6 +167,9 @@ class GenerateCert extends React.Component {
                         (<h1>Welcome</h1>)}
                 <button onClick={() => this.checkAddressAndGetCourses()}>
                     Get courses
+                </button>
+                <button onClick={() => this.check()}>
+                    check
                 </button>
 
                 {/*need to pipe properly, but the data is in instituteCourses*/}
