@@ -11,7 +11,7 @@ contract("Certification", (accounts) => {
     let mockInvalidAcc = accounts[2]
     let mockCert = {
         candidateName: "John Lim",
-        courseName: "Computer Science and Design",
+        courseIndex: 0,
         creationDate: new Date().getTime(),
         id: "5c0157fd3ff47a2a54075b01",
     };
@@ -59,7 +59,7 @@ contract("Certification", (accounts) => {
             const receipt = await certification.generateCertificate(
                 mockCert.id,
                 mockCert.candidateName,
-                mockCert.courseName,
+                mockCert.courseIndex,
                 mockCert.creationDate, { from: mockInstituteAcc }
             );
             assert.equal(receipt.logs.length, 1, "an event was not triggered");
@@ -80,7 +80,7 @@ contract("Certification", (accounts) => {
                 const receipt = await certification.generateCertificate(
                     mockCert.id,
                     mockCert.candidateName,
-                    mockCert.courseName,
+                    mockCert.courseIndex,
                     mockCert.creationDate, { from: mockInvalidAcc }
                 );
                 const failure = assert.fail(receipt);
@@ -96,7 +96,7 @@ contract("Certification", (accounts) => {
             const receipt = await certification2.generateCertificate(
                 mockCert.id,
                 mockCert.candidateName,
-                mockCert.courseName,
+                mockCert.courseIndex,
                 mockCert.creationDate, { from: mockInstituteAcc }
             );
             try {
@@ -104,7 +104,7 @@ contract("Certification", (accounts) => {
                 const receipt = await certification2.generateCertificate(
                     mockCert.id,
                     mockCert.candidateName,
-                    mockCert.courseName,
+                    mockCert.courseIndex,
                     mockCert.creationDate, { from: mockInstituteAcc }
                 );
                 const failure = assert.fail(certData);
@@ -128,7 +128,7 @@ contract("Certification", (accounts) => {
             );
             assert.equal(
                 certData[1],
-                mockCert.courseName,
+                mockInstituteCourses[mockCert.courseIndex]['course_name'],
                 "the course name of the certificate is incorrect"
             );
             assert.equal(
