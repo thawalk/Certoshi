@@ -11,6 +11,7 @@ const theme = createMuiTheme({
     primary: { main: "#2196f3" }
   },
   typography: {
+    "fontFamily": `"Open Sans", sans-serif, "Roboto", "Helvetica", "Arial"`,
     useNextVariants: true
   }
 });
