@@ -4,6 +4,7 @@ import Certification from '../contracts/Certification.json'
 import Web3 from 'web3'
 import { v4 as uuidv4 } from 'uuid';
 import TextField from '@material-ui/core/TextField';
+import CryptoJS from "crypto-js";
 
 class GenerateCert extends React.Component {
     state = {
@@ -59,6 +60,9 @@ class GenerateCert extends React.Component {
         const accounts = await web3.eth.getAccounts()
         let caller = accounts[0]
 
+        console.log(caller)
+        
+
         const networkId = await web3.eth.net.getId()
         const institutionData = Institution.networks[networkId]
         const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
@@ -71,7 +75,7 @@ class GenerateCert extends React.Component {
         let instituteAddress = "0xeE20bE5570B7b6f5Ba9C164Aace6cC42249b8346"
         try {
 
-            await institution.methods.getInstituteData(instituteAddress).call().then(res => {
+            await institution.methods.getInstituteData().call({from: caller}).then(res => {
                 const formattedInstituteCoursesData = res[3].map((x) => {
                     return { course_name: x.course_name };
                 });
@@ -127,20 +131,35 @@ class GenerateCert extends React.Component {
             //     mockCert.expirationDate,
             // )
             //------------ mock data end -----------------//
+            let certId = uuidv4()
 
-            await certification.methods.generateCertificate(
-                uuidv4(),
-                this.state.candidateName,
-                // use a dropdown menu to select course - change to this.state.courseName
-                mockCert.courseName,
-                // use like a date picker and convert to utc - change to this.state.expirationDate
-                mockCert.expirationDate,
-            )
-                .send({ from: caller }).on('receipt', function (receipt) {
-                    console.log(receipt);
-                    console.log(receipt.events)
-                    // ----- here can use a state or smth, to display a success message -----
-                })
+            // await certification.methods.generateCertificate(
+            //     certId,
+            //     this.encypt(this.state.candidateName,certId),
+            //     // use a dropdown menu to select course - change to this.state.courseName
+            //     this.encypt(mockCert.courseName,certId),
+            //     // use like a date picker and convert to utc - change to this.state.expirationDate
+            //     this.encypt(mockCert.expirationDate,certId)
+            // )
+            //     .send({ from: caller }).on('receipt', function (receipt) {
+            //         console.log(receipt);
+            //         console.log(receipt.events)
+            //         // ----- here can use a state or smth, to display a success message -----
+            //     })
+
+                await certification.methods.generateCertificate(
+                    certId,
+                    this.state.candidateName,
+                    // use a dropdown menu to select course - change to this.state.courseName
+                    mockCert.courseName,
+                    // use like a date picker and convert to utc - change to this.state.expirationDate
+                    mockCert.expirationDate
+                )
+                    .send({ from: caller }).on('receipt', function (receipt) {
+                        console.log(receipt);
+                        console.log(receipt.events)
+                        // ----- here can use a state or smth, to display a success message -----
+                    })
         }
         catch (error) {
             console.log(error)
@@ -154,12 +173,87 @@ class GenerateCert extends React.Component {
         }
     }
 
+    // async getCertificate() {
+    //     console.log("generating certificate")
+    //     const web3 = window.web3
+    //     const accounts = await web3.eth.getAccounts()
+    //     let caller = accounts[0]
+
+    //     console.log(caller)
+
+    //     // //------------ mock data start-----------------//
+    //     // let mockCert = {
+    //     //     candidateName: "John Lim",
+    //     //     courseName: "Computer Science and Design",
+    //     //     //---------------- remember to convert to utc time -------------------//
+    //     //     expirationDate: new Date().getTime(),
+    //     //     id: "5c0157fd3ff47a2a54075b01",
+    //     // };
+    //     // //------------ mock data end-----------------//
+
+    //     // instantiate the contract (---can't maintain it in a state for some reason, need to check again later----)
+    //     const networkId = await web3.eth.net.getId()
+    //     const certificationData = Certification.networks[networkId]
+    //     const certification = new web3.eth.Contract(Certification.abi, certificationData.address)
+    //     try {
+
+    //         //------------ mock data start-----------------//
+    //         // await certification.methods.generateCertificate(
+    //         //     mockCert.id,
+    //         //     // uuidv4(),
+    //         //     mockCert.candidateName,
+    //         //     mockCert.courseName,
+    //         //     mockCert.expirationDate,
+    //         // )
+    //         //------------ mock data end -----------------//
+    //         let certId = uuidv4()
+
+    //         await certification.methods.generateCertificate(
+    //             certId,
+    //             // this.encypt(this.state.candidateName,certId),
+    //             // use a dropdown menu to select course - change to this.state.courseName
+    //             this.encypt(mockCert.courseName,certId),
+    //             // use like a date picker and convert to utc - change to this.state.expirationDate
+    //             this.encypt(mockCert.expirationDate,certId)
+    //         )
+    //             .send({ from: caller }).on('receipt', function (receipt) {
+    //                 console.log(receipt);
+    //                 console.log(receipt.events)
+    //                 // ----- here can use a state or smth, to display a success message -----
+    //             })
+    //     }
+    //     catch (error) {
+    //         console.log(error)
+    //         console.log(error.code)
+    //         if (error.code == -32603) {
+    //             window.alert('Certificate with id already exits')
+    //         }
+    //         if (error.code == 4001) {
+    //             window.alert('Transaction rejected')
+    //         }
+    //     }
+    // }
+
     handleTextFieldChangeCandidateName(e) {
         this.setState({
             candidateName: e.target.value
         })
     }
 
+
+
+    encrypt(inputData, certId) {
+        return CryptoJS.AES.encrypt(JSON.stringify(inputData), certId + process.env.SECRET_KEY).toString();  
+    }
+
+    decrypt(encryptedData, certId) {
+        let bytes = CryptoJS.AES.decrypt(encryptedData, certId + process.env.SECRET_KEY);
+        return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    }
+
+    check() {
+        console.log(this.state.instituteCourses)
+    }
 
 
     render() {
@@ -180,6 +274,14 @@ class GenerateCert extends React.Component {
                         (<h1>Welcome</h1>)}
                 <button onClick={() => this.checkAddressAndGetCourses()}>
                     Get courses
+                </button>
+                
+                <button onClick={() => this.encrypt()}>
+                    Encrypt Test
+                </button>
+
+                <button onClick={() => this.check()}>
+                    check
                 </button>
 
                 {/*need to pipe properly, but the data is in instituteCourses*/}

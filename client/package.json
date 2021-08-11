@@ -9,6 +9,7 @@
     "@material-ui/core": "^3.7.1",
     "@material-ui/icons": "^3.0.1",
     "babel-loader": "^8.0.4",
+    "crypto-js": "^4.1.1",
     "prop-types": "^15.6.2",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
