@@ -42,7 +42,7 @@ contract("Institution", (accounts) => {
     });
 
     describe("Adding of an Institution", async() => {
-        it("adds an institute with valid institute account", async() => {
+        it("adds an institute with valid institute account and institute details", async() => {
             const receipt = await institution.addInstitute(
                 mockInstituteAcc,
                 mockInstitute.instituteName,
@@ -130,6 +130,26 @@ contract("Institution", (accounts) => {
                 );
             }
         });
+
+        it("fails if no courses given in institute details", async() => {
+                    const institution2 = await Institution.new({ from: mockOwnerAcc });
+                    try {
+                        // add institute with same institute address - should fail
+                        const receipt = await institution2.addInstitute(
+                            mockInstituteAcc,
+                            mockInstitute.instituteName,
+                            mockInstitute.instituteAcronym,
+                            mockInstitute.instituteLink,
+                            [], { from: mockOwnerAcc }
+                        );
+                        const failure = assert.fail(receipt);
+                    } catch (err) {
+                        assert(
+                            err.message.indexOf("revert") >= 0,
+                            "error message must contain revert"
+                        );
+                    }
+                });
     });
 
     describe("Data Retrieval for Institute data by Institute Account", async() => {

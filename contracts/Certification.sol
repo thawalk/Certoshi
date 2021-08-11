@@ -47,12 +47,14 @@ contract Certification {
     function generateCertificate(
         string memory _id,
         string memory _candidate_name,
-        string memory _course_name, 
+        uint256 _course_index, 
         uint256 _creation_date) public {
         require(institution.checkInstitutePermission(msg.sender) == true, "Institute account does not exist");
         bytes32 byte_id = stringToBytes32(_id);
         require(certificates[byte_id].creation_date == 0, "Certificate with given id already exists");
-        (string memory _institute_name, string memory _institute_acronym, string memory _institute_link, Institution.Course[] memory _) = institution.getInstituteData(msg.sender);
+        (string memory _institute_name, string memory _institute_acronym, string memory _institute_link, Institution.Course[] memory _institute_courses) = institution.getInstituteData(msg.sender);
+        require(_course_index >= 0 && _course_index < _institute_courses.length, "Invalid Course index");
+        string memory _course_name = _institute_courses[_course_index].course_name;
         bool revocation_status = false;
         certificates[byte_id] = Certificate(_candidate_name, _course_name, _creation_date, _institute_name, _institute_acronym, _institute_link, revocation_status);
         emit certificateGenerated(byte_id);

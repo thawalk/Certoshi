@@ -5,7 +5,7 @@ const Certification = artifacts.require('Certification')
 const mockCert = {
     candidateName: "John Lim",
     orgName: "Singapore University of Technology and Design",
-    courseName: "Computer Science and Design",
+    courseIndex: 0,
     creationDate: new Date().getTime(),
     id: "5c0157fd3ff47a2a54075b01",
 };
@@ -38,7 +38,7 @@ module.exports = async function(callback){
         const receipt = await certification.generateCertificate(
             mockCert.id,
             mockCert.candidateName,
-            mockCert.courseName,
+            mockCert.courseIndex,
             mockCert.creationDate, { from: mockInstituteAcc }
         );
 

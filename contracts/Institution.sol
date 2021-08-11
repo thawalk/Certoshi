@@ -53,7 +53,7 @@ contract Institution {
         // Only owner can add institute
         require(
             msg.sender == owner,
-            "caller must be the owner - only owner can add an institute"
+            "Caller must be the owner - only owner can add an institute"
         );
         bytes memory tempEmptyStringNameTest = bytes(
             institutes[_address].institute_name
@@ -61,6 +61,10 @@ contract Institution {
         require(
             tempEmptyStringNameTest.length == 0,
             "Institute with token already exists"
+        );
+        require(
+            _institute_courses.length > 0,
+            "Atleast one course must be added"
         );
         institutes[_address] = Institute(
             _institute_name,

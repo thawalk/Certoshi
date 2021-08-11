@@ -120,7 +120,6 @@ function CertificateDisplay(){
         console.log(process.env.REACT_APP_STAGE)
         console.log(process.env.NODE_ENV)
         console.log(process.env.REACT_APP_INFURA_PROJECT_ENDPOINT)
-        console.log(process.env.REACT_APP_MNEMONIC)
         connectWeb3()
         getCertificateData(id).then((data)=>{
             console.log("Here's the retrieved certificate data of id", id)    
