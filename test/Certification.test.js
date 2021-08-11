@@ -1,8 +1,9 @@
-import { encrypt } from "../client/src/Components/encrypt";
-import { decrypt } from "../client/src/Components/decrypt";
 const web3 = require("web3");
 var Certification = artifacts.require("./Certification.sol");
 var Institution = artifacts.require("./Institution.sol");
+
+import { encrypt } from "../client/src/Components/encrypt";
+import { decrypt } from "../client/src/Components/decrypt";
 
 require("chai").use(require("chai-as-promised")).should();
 

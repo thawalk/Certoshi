@@ -2,11 +2,13 @@ const chalk = require('chalk');
 const Institution = artifacts.require('Institution')
 const Certification = artifacts.require('Certification')
 
+const { encrypt } = require('../client/src/Components/encrypt')
+
 const mockCert = {
-    candidateName: "John Lim",
+    candidateName: encrypt("John Lim", "5c0157fd3ff47a2a54075b01"),
     orgName: "Singapore University of Technology and Design",
     courseIndex: 0,
-    creationDate: new Date().getTime(),
+    creationDate: encrypt(new Date().getTime(), "5c0157fd3ff47a2a54075b01"),
     id: "5c0157fd3ff47a2a54075b01",
 };
 
