@@ -68,10 +68,13 @@ class GenerateCert extends React.Component {
         // to be changed to not having address
         // copy over the institute address that you added
 
-        let instituteAddress = "0xeE20bE5570B7b6f5Ba9C164Aace6cC42249b8346"
+        let instituteAddress = "0x027AC1820dE72D6f7B0a5d306081Bc529056B871"
+        console.log("caller",caller)
+      
         try {
 
-            await institution.methods.getInstituteData(instituteAddress).call().then(res => {
+            await institution.methods.getInstituteData().call({from:caller}).then(res => {
+               
                 const formattedInstituteCoursesData = res[3].map((x) => {
                     return { course_name: x.course_name };
                 });
@@ -107,8 +110,14 @@ class GenerateCert extends React.Component {
             candidateName: "John Lim",
             courseName: "Computer Science and Design",
             //---------------- remember to convert to utc time -------------------//
-            expirationDate: new Date().getTime(),
+            creationDate: new Date().getTime(),
             id: "5c0157fd3ff47a2a54075b01",
+            /*
+                mockCert.id,
+                mockCert.candidateName,
+                mockCert.courseName,
+                mockCert.creationDate, { from: mockInstituteAcc }
+            */
         };
         //------------ mock data end-----------------//
 
@@ -118,26 +127,19 @@ class GenerateCert extends React.Component {
         const certification = new web3.eth.Contract(Certification.abi, certificationData.address)
         try {
 
-            //------------ mock data start-----------------//
-            // await certification.methods.generateCertificate(
-            //     mockCert.id,
-            //     // uuidv4(),
-            //     mockCert.candidateName,
-            //     mockCert.courseName,
-            //     mockCert.expirationDate,
-            // )
-            //------------ mock data end -----------------//
-
+        
+            const id = uuidv4()
             await certification.methods.generateCertificate(
-                uuidv4(),
+                id,
                 this.state.candidateName,
                 // use a dropdown menu to select course - change to this.state.courseName
                 mockCert.courseName,
                 // use like a date picker and convert to utc - change to this.state.expirationDate
-                mockCert.expirationDate,
+                mockCert.creationDate,
             )
                 .send({ from: caller }).on('receipt', function (receipt) {
                     console.log(receipt);
+                    console.log("uuid",id)
                     console.log(receipt.events)
                     // ----- here can use a state or smth, to display a success message -----
                 })
@@ -160,6 +162,10 @@ class GenerateCert extends React.Component {
         })
     }
 
+    check() {
+        console.log(this.state.instituteCourses)
+    }
+
 
 
     render() {
@@ -180,6 +186,9 @@ class GenerateCert extends React.Component {
                         (<h1>Welcome</h1>)}
                 <button onClick={() => this.checkAddressAndGetCourses()}>
                     Get courses
+                </button>
+                <button onClick={() => this.check()}>
+                    check
                 </button>
 
                 {/*need to pipe properly, but the data is in instituteCourses*/}

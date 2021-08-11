@@ -2,6 +2,65 @@ import React from "react";
 import Institution from '../contracts/Institution.json'
 import Web3 from 'web3'
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button'
+import AddInstitutes from "./AddInstitutes";
+import { Form, } from "react-bootstrap";
+import Grid from "@material-ui/core/Grid";
+
+
+
+
+import PropTypes from "prop-types";
+import Avatar from "@material-ui/core/Avatar";
+import FormControl from "@material-ui/core/FormControl";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import LockIcon from "@material-ui/icons/LockOutlined";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
+import withStyles from "@material-ui/core/styles/withStyles";
+import ChainImage from "../Images/chainT.png";
+import Link from "react-router-dom/Link";
+
+const styles = theme => ({
+  paper: {
+    [theme.breakpoints.up("sm")]: {
+      borderRadius: "5%",
+      marginRight: 30
+    },
+    [theme.breakpoints.up(1150)]: {
+      marginLeft: 50,
+      width: 500
+    },
+    height: "90vh",
+    marginTop: theme.spacing.unit * 6,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+      .spacing.unit * 3}px`
+  },
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing.unit
+  },
+  submit: {
+    marginTop: theme.spacing.unit * 3
+  },
+  media: {
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+      .spacing.unit * 3}px`
+  },
+  imgstyles: {
+    maxWidth: "70vw",
+    maxHeight: "90vh",
+    [theme.breakpoints.down(1200)]: {
+      marginTop: theme.spacing.unit * 4
+    }
+  }
+});
 
 class Admin extends React.Component {
     state = {
@@ -47,20 +106,20 @@ class Admin extends React.Component {
         try {
             const accounts = await web3.eth.getAccounts()
             let caller = accounts[0]
-            console.log("caller",caller)
+            console.log("caller", caller)
             const networkId = await web3.eth.net.getId()
-            console.log("networkId",networkId)
+            console.log("networkId", networkId)
             // Load institution contract
             const institutionData = Institution.networks[networkId]
             if (institutionData) {
                 // create a web3 version of the contract
                 const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
-                console.log("institution",institution)
+                console.log("institution", institution)
                 this.setState({ institution })
                 try {
                     // get owner of smart contract
                     let smartContractOwner = await institution.methods.owner().call()
-                    console.log("smartContractOwner",smartContractOwner)
+                    console.log("smartContractOwner", smartContractOwner)
                     // compare the caller and the owner of smart contract
                     if (caller == smartContractOwner) {
                         // give access to the page
@@ -80,7 +139,7 @@ class Admin extends React.Component {
                     }
                 }
                 catch (error) {
-                    console.log("error is",error)
+                    console.log("error is", error)
                 }
             }
             else {
@@ -191,150 +250,165 @@ class Admin extends React.Component {
             else {
                 window.alert('Institute account address is not legit')
             }
-        
+
         }
     }
 
 
-check() {
-    console.log(this.state.instituteCourses)
-}
-handleTextFieldChangeAddress(e) {
-    this.setState({
-        instituteAddress: e.target.value
-    })
-}
+    check() {
+        console.log(this.state.instituteCourses)
+    }
+    handleTextFieldChangeAddress(e) {
+        this.setState({
+            instituteAddress: e.target.value
+        })
+    }
 
-handleTextFieldChangeName(e) {
-    this.setState({
-        instituteName: e.target.value
-    })
-}
-handleTextFieldChangeAcronym(e) {
-    this.setState({
-        instituteAcronym: e.target.value
-    })
-}
-handleTextFieldChangeWebsite(e) {
-    this.setState({
-        instituteWebsite: e.target.value
-    })
-}
-handleTextFieldChangeCourse(e) {
-    this.setState({
-        course: e.target.value
-    })
-}
+    handleTextFieldChangeName(e) {
+        this.setState({
+            instituteName: e.target.value
+        })
+    }
+    handleTextFieldChangeAcronym(e) {
+        this.setState({
+            instituteAcronym: e.target.value
+        })
+    }
+    handleTextFieldChangeWebsite(e) {
+        this.setState({
+            instituteWebsite: e.target.value
+        })
+    }
+    handleTextFieldChangeCourse(e) {
+        this.setState({
+            course: e.target.value
+        })
+    }
 
-appendToCourseList() {
-    this.setState({
-        instituteCourses: [...this.state.instituteCourses, { course_name: this.state.course }],
-        course: ""
-    })
-    console.log(this.state.instituteCourses)
-}
-
-
-render() {
-    const {
-        renderLoading,
-        renderAdmin,
-        renderMetaMaskError,
-        course,
-        instituteWebsite,
-        instituteAddress,
-        instituteAcronym,
-        instituteName
-    } = this.state;
-    return (
-        <>
-            {
-                renderLoading ? (<h1>Loading</h1>) :
-                    renderMetaMaskError ? (<h1>Metamask issue</h1>) :
-                        renderAdmin ? (<h1>Access granted</h1>) :
-                            (<h1>Not admin</h1>)
-
-            }
-            {renderAdmin ?
-                <>
-
-                    <TextField
-                        // add a error function to ensure they don't submit empty strings
-                        // error={error}
-                        autoFocus
-                        margin="dense"
-                        id="address"
-                        label="Institute Account Address"
-                        type="name"
-                        value={instituteAddress}
-                        fullWidth
-                        // helperText={helperText}
-                        onChange={(e) => this.handleTextFieldChangeAddress(e)}
-                    />
-                    <TextField
-                        // add a error function to ensure they don't submit empty strings
-                        // error={error}
-                        autoFocus
-                        margin="dense"
-                        id="address"
-                        label="Institute Name"
-                        type="name"
-                        value={instituteName}
-                        fullWidth
-                        // helperText={helperText}
-                        onChange={(e) => this.handleTextFieldChangeName(e)}
-                    />
-                    <TextField
-                        // add a error function to ensure they don't submit empty strings
-                        // error={error}
-                        autoFocus
-                        margin="dense"
-                        id="address"
-                        label="Institute Acronym"
-                        type="name"
-                        value={instituteAcronym}
-                        fullWidth
-                        // helperText={helperText}
-                        onChange={(e) => this.handleTextFieldChangeAcronym(e)}
-                    />
-                    <TextField
-                        // add a error function to ensure they don't submit empty strings
-                        // error={error}
-                        autoFocus
-                        margin="dense"
-                        id="address"
-                        label="Institute Website"
-                        type="name"
-                        value={instituteWebsite}
-                        fullWidth
-                        // helperText={helperText}
-                        onChange={(e) => this.handleTextFieldChangeWebsite(e)}
-                    />
-                    <TextField
-                        // add a error function to ensure they don't submit empty strings
-                        // error={error}
-                        autoFocus
-                        margin="dense"
-                        id="address"
-                        label="Add course"
-                        type="name"
-                        fullWidth
-                        value={course}
-                        // helperText={helperText}
-                        onChange={(e) => this.handleTextFieldChangeCourse(e)}
-                    />
-                    <button onClick={() => this.appendToCourseList()}>
-                        Add Course
-                    </button>
-                    <button onClick={() => this.addInstituteToBlockchain()}>
-                        Add institute
-                    </button>
-                </> : <></>}
+    appendToCourseList() {
+        this.setState({
+            instituteCourses: [...this.state.instituteCourses, { course_name: this.state.course }],
+            course: ""
+        })
+        console.log(this.state.instituteCourses)
+    }
 
 
-        </>
-    );
-}
+    render() {
+        const { classes } = this.props;
+        const {
+            renderLoading,
+            renderAdmin,
+            renderMetaMaskError,
+            course,
+            instituteWebsite,
+            instituteAddress,
+            instituteAcronym,
+            instituteName
+        } = this.state;
+        return (
+            <>
+                {
+                    renderLoading ? (<h1>Loading</h1>) :
+                        renderMetaMaskError ? (<h1>Metamask issue</h1>) :
+                            renderAdmin ? (<h1 align="center">Welcome, System Admin</h1>) :
+                                (<h1>Not admin</h1>)
+
+                }
+                {renderAdmin ?
+                    <>
+                        <div>
+                      <Grid container style={{ height: "100%", justifyContent: "center"}}>
+                          <Paper className={classes.paper}>
+                            <Typography component="h1" variant="h5">
+                              Add Institute Details
+                            </Typography>
+                            <form className={classes.form}>
+                              <FormControl margin="normal" required fullWidth>
+                                <InputLabel htmlFor="email">Account Address</InputLabel>
+                                <Input
+                                  id="address"
+                                  label="Institute Account Address"
+                                  type="name"
+                                  value={instituteAddress}
+                                  onChange={(e) => this.handleTextFieldChangeAddress(e)}
+                                  autoFocus
+                                />
+                              </FormControl>
+                              <FormControl margin="normal" required fullWidth>
+                                <InputLabel htmlFor="email">Institute Name</InputLabel>
+                                <Input
+                                  id="address"
+                                  label="Institute Name"
+                                  type="name"
+                                  value={instituteName}
+                                  onChange={(e) => this.handleTextFieldChangeName(e)}
+                                  autoFocus
+                                />
+                              </FormControl>
+                              <FormControl margin="normal" required fullWidth>
+                                <InputLabel htmlFor="email">Institute Acronym</InputLabel>
+                                <Input
+                                  id="address"
+                                  label="Institute Acronym"
+                                  type="name"
+                                  value={instituteAcronym}
+                                  onChange={(e) => this.handleTextFieldChangeAcronym(e)}
+                                  autoFocus
+                                />
+                              </FormControl>
+                              <FormControl margin="normal" required fullWidth>
+                                <InputLabel htmlFor="email">Institute Website</InputLabel>
+                                <Input
+                                  id="address"
+                                  label="Institute Website"
+                                  type="name"
+                                  value={instituteWebsite}
+                                  onChange={(e) => this.handleTextFieldChangeWebsite(e)}
+                                  autoFocus
+                                />
+                              </FormControl>
+                              <FormControl margin="normal" required fullWidth>
+                                <InputLabel htmlFor="email">Course Name</InputLabel>
+                                <Input
+                                  id="address"
+                                  label="Add course"
+                                  type="name"
+                                  value={course}
+                                  onChange={(e) => this.handleTextFieldChangeCourse(e)}
+                                  autoFocus
+                                />
+                              </FormControl>
+                              <Button onClick={() => this.appendToCourseList()}
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                className={classes.submit}>
+                                Add Courses
+                              </Button>
+                              <Button onClick={() => this.addInstituteToBlockchain()}
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                className={classes.submit}>
+                                Add Institute
+                              </Button>
+                            </form>
+                          </Paper>
+                        </Grid>
+                    </div>
+                    </> : <></>}
+
+
+            </>
+        );
+    }
 }
 
-export default Admin
+Admin.propTypes = {
+    classes: PropTypes.object.isRequired
+  };
+  
+  export default withStyles(styles)(Admin);
