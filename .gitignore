@@ -1,5 +1,5 @@
 .env
-node_modules
+./node_modules
 
 # Ignore build output of client static side
 client/build
