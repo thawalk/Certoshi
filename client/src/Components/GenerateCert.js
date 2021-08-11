@@ -4,6 +4,9 @@ import Certification from '../contracts/Certification.json'
 import Web3 from 'web3'
 import { v4 as uuidv4 } from 'uuid';
 import TextField from '@material-ui/core/TextField';
+import CryptoJS from "crypto-js";
+import { encrypt } from './encrypt'
+
 
 class GenerateCert extends React.Component {
     state = {
@@ -18,10 +21,9 @@ class GenerateCert extends React.Component {
         instituteCourses: [],
         candidateName: "",
         selectedCourse: "",
-        expirationDate: 0,
+        creationDate: 0,
         isLegitInstitute: false
     };
-    // this.delta = this.delta.bind(this);
 
     async componentWillMount() {
         await this.loadWeb3Metamask()
@@ -54,27 +56,17 @@ class GenerateCert extends React.Component {
     }
 
     async checkAddressAndGetCourses() {
-        console.log("adding institute to the blockchain")
         const web3 = window.web3
         const accounts = await web3.eth.getAccounts()
         let caller = accounts[0]
-
+        
         const networkId = await web3.eth.net.getId()
         const institutionData = Institution.networks[networkId]
         const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
 
-        // let instituteAddress = "0x83E41c66E7EE0f14d0Fc8E74720652F6662eB1Eb"
-
-        // to be changed to not having address
-        // copy over the institute address that you added
-
-        let instituteAddress = "0x027AC1820dE72D6f7B0a5d306081Bc529056B871"
-        console.log("caller",caller)
-      
         try {
 
-            await institution.methods.getInstituteData().call({from:caller}).then(res => {
-               
+            await institution.methods.getInstituteData().call({from: caller}).then(res => {
                 const formattedInstituteCoursesData = res[3].map((x) => {
                     return { course_name: x.course_name };
                 });
@@ -103,13 +95,10 @@ class GenerateCert extends React.Component {
         const accounts = await web3.eth.getAccounts()
         let caller = accounts[0]
 
-        console.log(caller)
-
         //------------ mock data start-----------------//
         let mockCert = {
             candidateName: "John Lim",
             courseName: "Computer Science and Design",
-            //---------------- remember to convert to utc time -------------------//
             creationDate: new Date().getTime(),
             id: "5c0157fd3ff47a2a54075b01",
             /*
@@ -126,21 +115,18 @@ class GenerateCert extends React.Component {
         const certificationData = Certification.networks[networkId]
         const certification = new web3.eth.Contract(Certification.abi, certificationData.address)
         try {
+            const certId = uuidv4()
 
-        
-            const id = uuidv4()
             await certification.methods.generateCertificate(
-                id,
-                this.state.candidateName,
+                certId,
+                encrypt(this.state.candidateName,certId),
                 // use a dropdown menu to select course - change to this.state.courseName
-                mockCert.courseName,
-                // use like a date picker and convert to utc - change to this.state.expirationDate
-                mockCert.creationDate,
+                0,
+                // use like a date picker and convert to utc - change to this.state.creationDate
+                encrypt(mockCert.creationDate,certId)
             )
                 .send({ from: caller }).on('receipt', function (receipt) {
-                    console.log(receipt);
-                    console.log("uuid",id)
-                    console.log(receipt.events)
+                    console.log(certId)
                     // ----- here can use a state or smth, to display a success message -----
                 })
         }
@@ -161,11 +147,6 @@ class GenerateCert extends React.Component {
             candidateName: e.target.value
         })
     }
-
-    check() {
-        console.log(this.state.instituteCourses)
-    }
-
 
 
     render() {
@@ -214,7 +195,7 @@ class GenerateCert extends React.Component {
                             // helperText={helperText}
                             onChange={(e) => this.handleTextFieldChangeCandidateName(e)}
                         />
-                        <h1>Add a expiration date picker here and connect with expirationDate state</h1>
+                        <h1>Add a expiration date picker here and connect with creationDate state</h1>
                         <h1>Add a course picker here and connect with selectedCourse state</h1>
                         <button onClick={() => this.generateCertificate()}>
                             Generate Cert
