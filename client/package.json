@@ -17,7 +17,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "2.1.1",
     "uuid": "^8.3.2",
-    "babel-loader": "^8.0.4"
+    "babel-loader": "^8.0.4",
+    "use-between": "0.0.18"
   },
   "scripts": {
     "start": "react-scripts start",

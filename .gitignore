@@ -1,5 +1,7 @@
 .env
+
 node_modules
+./node_modules
 
 # Ignore build output of client static side
 client/build
@@ -7,3 +9,4 @@ client/build
 # Ignore build output of compiled contracts
 build/contracts/*
 client/src/contracts/*
+contracts

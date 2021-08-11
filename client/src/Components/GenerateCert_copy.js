@@ -3,7 +3,10 @@ import Institution from '../contracts/Institution.json'
 import Certification from '../contracts/Certification.json'
 import Web3 from 'web3'
 import { v4 as uuidv4 } from 'uuid';
-import TextField from '@material-ui/core/TextField';
+
+import PropTypes from "prop-types";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -16,9 +19,6 @@ import Select from '@material-ui/core/Select';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import InputBase from '@material-ui/core/InputBase';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import CryptoJS from "crypto-js";
-import { encrypt } from './encrypt'
-import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = theme => ({
     container: {
@@ -101,10 +101,6 @@ const styles = theme => ({
     }
 });
 
-
-
-
-
 class GenerateCert extends React.Component {
     state = {
         owner: '0x0',
@@ -119,12 +115,9 @@ class GenerateCert extends React.Component {
         candidateName: "",
         selectedCourse: "",
         expirationDate: 0,
-        isLegitInstitute: false,
-        currentState: "normal", //addons
-        certificateId: "",
-        creationDate: 0,
-
+        isLegitInstitute: false
     };
+    // this.delta = this.delta.bind(this);
 
     async componentWillMount() {
         await this.loadWeb3Metamask()
@@ -157,6 +150,7 @@ class GenerateCert extends React.Component {
     }
 
     async checkAddressAndGetCourses() {
+        console.log("adding institute to the blockchain")
         const web3 = window.web3
         const accounts = await web3.eth.getAccounts()
         let caller = accounts[0]
@@ -165,9 +159,18 @@ class GenerateCert extends React.Component {
         const institutionData = Institution.networks[networkId]
         const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
 
+        // let instituteAddress = "0x83E41c66E7EE0f14d0Fc8E74720652F6662eB1Eb"
+
+        // to be changed to not having address
+        // copy over the institute address that you added
+
+        let instituteAddress = "0x027AC1820dE72D6f7B0a5d306081Bc529056B871"
+        console.log("caller", caller)
+
         try {
 
             await institution.methods.getInstituteData().call({ from: caller }).then(res => {
+
                 const formattedInstituteCoursesData = res[3].map((x) => {
                     return { course_name: x.course_name };
                 });
@@ -188,9 +191,7 @@ class GenerateCert extends React.Component {
 
     }
 
-    test() {
-        console.log("test")
-    }
+
 
     async generateCertificate() {
         console.log("generating certificate")
@@ -198,10 +199,13 @@ class GenerateCert extends React.Component {
         const accounts = await web3.eth.getAccounts()
         let caller = accounts[0]
 
+        console.log(caller)
+
         //------------ mock data start-----------------//
         let mockCert = {
             candidateName: "John Lim",
             courseName: "Computer Science and Design",
+            //---------------- remember to convert to utc time -------------------//
             creationDate: new Date().getTime(),
             id: "5c0157fd3ff47a2a54075b01",
             /*
@@ -218,28 +222,23 @@ class GenerateCert extends React.Component {
         const certificationData = Certification.networks[networkId]
         const certification = new web3.eth.Contract(Certification.abi, certificationData.address)
         try {
-            const certId = uuidv4()
 
+
+            const id = uuidv4()
             await certification.methods.generateCertificate(
-                certId,
-                encrypt(this.state.candidateName, certId),
+                id,
+                this.state.candidateName,
                 // use a dropdown menu to select course - change to this.state.courseName
-                0,
-                // use like a date picker and convert to utc - change to this.state.creationDate
-                encrypt(mockCert.creationDate, certId)
+                mockCert.courseName,
+                // use like a date picker and convert to utc - change to this.state.expirationDate
+                mockCert.creationDate,
             )
-                .send({ from: caller }).on('receipt', function (receipt, test) {
-                    try {
-
-                        console.log(this.test())
-                    }
-                    catch (error) {
-                        console.log(error)
-                    }
-                    console.log(certId)
+                .send({ from: caller }).on('receipt', function (receipt) {
+                    console.log(receipt);
+                    console.log("uuid", id)
+                    console.log(receipt.events)
                     // ----- here can use a state or smth, to display a success message -----
                 })
-                .then((res) => { })
         }
         catch (error) {
             console.log(error)
@@ -259,6 +258,11 @@ class GenerateCert extends React.Component {
         })
     }
 
+    check() {
+        console.log(this.state.instituteCourses)
+    }
+
+
 
     render() {
         const { classes } = this.props;
@@ -270,10 +274,17 @@ class GenerateCert extends React.Component {
             instituteWebsite,
             instituteCourses,
             isLegitInstitute,
-            candidateName,
-            firstname,
+            candidateName, //AFTER THIS LINE CHANGE
+            firstname, //NINA STATES ONWARDS
             lastname,
+            organization,
+            coursename,
+            duration,
+            currentState,
+            orgLogo,
+            emailId,
             certificateId
+
         } = this.state;
         return (
             <>
@@ -291,6 +302,117 @@ class GenerateCert extends React.Component {
                 {/* <h1>{instituteCourses}</h1> */}
                 {isLegitInstitute ?
                     <>
+                        <Grid container align="center" justify="center" alignItems="center">
+                            <Grid item xs={8} sm={8}>
+                                <Paper className={classes.paper}>
+                                    <Typography variant="h3" color="inherit">
+                                        Certificate Generation Form
+                                    </Typography>
+                                    <form
+                                        className={classes.container}
+                                        autoComplete="off"
+                                        onSubmit={this.submitData}
+                                    >
+                                        <Grid item xs={12} sm={12}>
+                                            <TextField
+                                                required
+                                                id="institute-name"
+                                                label="Institute Name"
+                                                className={classes.instituteField}
+                                                defaultValue={organization}
+                                                margin="normal"
+                                                variant="outlined"
+                                                InputProps={{
+                                                    readOnly: true
+                                                }}
+                                            />
+                                            <TextField
+                                                required
+                                                id="institute-acronym"
+                                                label="Institute Acronym"
+                                                className={classes.instituteField}
+                                                defaultValue={organization}
+                                                margin="normal"
+                                                variant="outlined"
+                                                InputProps={{
+                                                    readOnly: true
+                                                }}
+                                            />
+                                            <TextField
+                                                required
+                                                id="institute-website"
+                                                label="Institute Website"
+                                                className={classes.instituteField}
+                                                defaultValue={organization}
+                                                margin="normal"
+                                                variant="outlined"
+                                                InputProps={{
+                                                    readOnly: true
+                                                }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={12}>
+                                            <TextField
+                                                required
+                                                id="firstname"
+                                                label="First Name"
+                                                className={classes.textField}
+                                                value={firstname}
+                                                onChange={this.handleChange("firstname")}
+                                                margin="normal"
+                                                variant="outlined"
+                                            />
+                                            <TextField
+                                                required
+                                                id="lastname"
+                                                label="Last Name"
+                                                className={classes.textField}
+                                                value={lastname}
+                                                onChange={this.handleChange("lastname")}
+                                                margin="normal"
+                                                variant="outlined"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={12} >
+                                            <FormControl required variant="outlined" className={classes.formControl}>
+                                                <InputLabel htmlFor="course-name">Course Name</InputLabel>
+                                                <Select
+                                                    native
+                                                    value={this.state.course}
+                                                    onChange={this.handleChange("coursename")}
+                                                    label="Age"
+                                                    inputProps={{
+                                                        course: '',
+                                                        id: 'course-name'
+                                                    }}
+                                                >
+                                                    <option aria-label="None" value="" />
+                                                    <option value={10}>Course 1</option>
+                                                    <option value={20}>Course 2</option>
+                                                    <option value={30}>Course 3</option>
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={12} sm={12}>
+                                            <SubmitAnimation
+                                                currentState={currentState}
+                                                className={classes.submitBtn}
+                                            />
+                                            {currentState === "validate" && (
+                                                <Typography
+                                                    variant="caption"
+                                                    color="inherit"
+                                                    className={classes.submitBtn}
+                                                >
+                                                    Certificate genrated with id {certificateId}
+                                                </Typography>
+                                            )}
+                                        </Grid>
+                                    </form>
+                                </Paper>
+                            </Grid>
+                        </Grid>
+
 
                         <h1>instituteName</h1>
                         <h1>{instituteName}</h1>
@@ -311,28 +433,20 @@ class GenerateCert extends React.Component {
                             // helperText={helperText}
                             onChange={(e) => this.handleTextFieldChangeCandidateName(e)}
                         />
-                        <h1>Add a expiration date picker here and connect with creationDate state</h1>
+                        <h1>Add a expiration date picker here and connect with expirationDate state</h1>
                         <h1>Add a course picker here and connect with selectedCourse state</h1>
                         <button onClick={() => this.generateCertificate()}>
                             Generate Cert
                         </button>
                     </> :
                     <></>}
-                {isLegitInstitute ?
-                    <>
-                        <Grid container style={{ height: "100%", justifyContent: "center" }}>
-                            <Paper className={classes.paper}>
-                                <Typography component="h1" variant="h5">
-                                    Uni Name Here
-                                </Typography>
-                            </Paper>
-                        </Grid>
-                    </> : <></>
-                }
 
             </>
         );
     }
 }
+GenerateCert.propTypes = {
+    classes: PropTypes.object.isRequired
+};
 
 export default withStyles(styles)(GenerateCert);
