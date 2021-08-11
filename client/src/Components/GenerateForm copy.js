@@ -182,7 +182,7 @@ class GenerateForm extends React.Component {
               id="institute-name"
               label="Institute Name"
               className={classes.instituteField}
-              defaultValue={organization}
+              defaultValue={instituteName}
               margin="normal"
               variant="outlined"
               InputProps={{
@@ -194,7 +194,7 @@ class GenerateForm extends React.Component {
               id="institute-acronym"
               label="Institute Acronym"
               className={classes.instituteField}
-              defaultValue={organization}
+              defaultValue={instituteAcronym}
               margin="normal"
               variant="outlined"
               InputProps={{
@@ -206,7 +206,7 @@ class GenerateForm extends React.Component {
               id="institute-website"
               label="Institute Website"
               className={classes.instituteField}
-              defaultValue={organization}
+              defaultValue={instituteWebsite}
               margin="normal"
               variant="outlined"
               InputProps={{

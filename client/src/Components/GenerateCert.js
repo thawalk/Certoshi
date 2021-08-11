@@ -4,6 +4,99 @@ import Certification from '../contracts/Certification.json'
 import Web3 from 'web3'
 import { v4 as uuidv4 } from 'uuid';
 import TextField from '@material-ui/core/TextField';
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import SubmitAnimation from "./SubmitAnimation";
+import { generateCertificate } from "../Utils/apiConnect";
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import InputBase from '@material-ui/core/InputBase';
+import FormHelperText from '@material-ui/core/FormHelperText';
+
+const styles = theme => ({
+    container: {
+      display: "flex",
+      flexWrap: "wrap"
+    },
+    formControl: {
+      margin: theme.spacing.unit,
+      minWidth: 520,
+    },
+    selectEmpty: {
+      marginTop: theme.spacing.unit,
+    },
+    textField: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      [theme.breakpoints.up("sm")]: { width: 250 },
+      [theme.breakpoints.down("sm")]: { width: 200 }
+    },
+    instituteField: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      [theme.breakpoints.up("sm")]: { width: 520 },
+      [theme.breakpoints.down("sm")]: { width: 200 }
+    },
+    dense: {
+      marginTop: 16
+    },
+    menu: {
+      width: 200
+    },
+    paper: {
+      [theme.breakpoints.down("sm")]: {
+        margin: theme.spacing.unit,
+        padding: `${theme.spacing.unit * 2}px`
+      },
+      minHeight: "75vh",
+      maxWidth: "95%",
+      margin: theme.spacing.unit * 5,
+      display: "flex",
+      flexDirection: "column",
+      padding: `${theme.spacing.unit * 4}px ${theme.spacing.unit * 8}px ${theme
+        .spacing.unit * 3}px`
+    },
+    rightpaper: {
+      [theme.breakpoints.up("sm")]: {
+        maxHeight: "75vh"
+      },
+      [theme.breakpoints.down("sm")]: {
+        maxWidth: "95%",
+        margin: theme.spacing.unit * 2
+      },
+      maxWidth: "60%",
+      minWidth: "60%",
+      margin: theme.spacing.unit * 5,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+        .spacing.unit * 3}px`
+    },
+    verificationBox: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyItems: "center",
+      height: "100%",
+      marginTop: theme.spacing.unit * 3
+    },
+    courseField: {
+      [theme.breakpoints.up("sm")]: {
+        width: "60%"
+      },
+      [theme.breakpoints.down("sm")]: {
+        minWidth: "80vw"
+      }
+    },
+    submitBtn: {
+      marginLeft: "50px"
+    }
+  });
 
 class GenerateCert extends React.Component {
     state = {
@@ -19,7 +112,9 @@ class GenerateCert extends React.Component {
         candidateName: "",
         selectedCourse: "",
         expirationDate: 0,
-        isLegitInstitute: false
+        isLegitInstitute: false,
+        currentState: "normal", //addons
+        certificateId:""
     };
     // this.delta = this.delta.bind(this);
 
@@ -69,12 +164,12 @@ class GenerateCert extends React.Component {
         // copy over the institute address that you added
 
         let instituteAddress = "0x027AC1820dE72D6f7B0a5d306081Bc529056B871"
-        console.log("caller",caller)
-      
+        console.log("caller", caller)
+
         try {
 
-            await institution.methods.getInstituteData().call({from:caller}).then(res => {
-               
+            await institution.methods.getInstituteData().call({ from: caller }).then(res => {
+
                 const formattedInstituteCoursesData = res[3].map((x) => {
                     return { course_name: x.course_name };
                 });
@@ -127,7 +222,7 @@ class GenerateCert extends React.Component {
         const certification = new web3.eth.Contract(Certification.abi, certificationData.address)
         try {
 
-        
+
             const id = uuidv4()
             await certification.methods.generateCertificate(
                 id,
@@ -139,7 +234,7 @@ class GenerateCert extends React.Component {
             )
                 .send({ from: caller }).on('receipt', function (receipt) {
                     console.log(receipt);
-                    console.log("uuid",id)
+                    console.log("uuid", id)
                     console.log(receipt.events)
                     // ----- here can use a state or smth, to display a success message -----
                 })
@@ -169,6 +264,7 @@ class GenerateCert extends React.Component {
 
 
     render() {
+        const { classes } = this.props;
         const {
             renderLoading,
             renderMetaMaskError,
@@ -177,7 +273,10 @@ class GenerateCert extends React.Component {
             instituteWebsite,
             instituteCourses,
             isLegitInstitute,
-            candidateName
+            candidateName,
+            firstname,
+            lastname,
+            certificateId
         } = this.state;
         return (
             <>
@@ -195,6 +294,7 @@ class GenerateCert extends React.Component {
                 {/* <h1>{instituteCourses}</h1> */}
                 {isLegitInstitute ?
                     <>
+                       
                         <h1>instituteName</h1>
                         <h1>{instituteName}</h1>
                         <h1>instituteAcronym</h1>

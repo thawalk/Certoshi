@@ -3,7 +3,6 @@ import Institution from '../contracts/Institution.json'
 import Web3 from 'web3'
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button'
-import AddInstitutes from "./AddInstitutes";
 import { Form, } from "react-bootstrap";
 import Grid from "@material-ui/core/Grid";
 
@@ -63,6 +62,9 @@ const styles = theme => ({
 });
 
 class Admin extends React.Component {
+    
+    
+
     state = {
         owner: '0x0',
         isOwner: false,
@@ -157,7 +159,16 @@ class Admin extends React.Component {
         }
     }
 
+    confirmPage(){
+        console.log("instAdd",this.state.instituteAddress)
+        console.log("name",this.state.instituteName)
+        console.log("acro",this.state.instituteAcronym)
+        console.log("web",this.state.instituteWebsite)
+        console.log("course",this.state.instituteCourses)
+        
 
+
+    }
 
     async addInstituteToBlockchain() {
         console.log("adding institute to the blockchain")
@@ -256,8 +267,12 @@ class Admin extends React.Component {
 
 
     check() {
-        console.log(this.state.instituteCourses)
+        // console.log(this.state)
+        // this.addToStore()
+
     }
+
+
     handleTextFieldChangeAddress(e) {
         this.setState({
             instituteAddress: e.target.value
@@ -386,6 +401,14 @@ class Admin extends React.Component {
                                 color="primary"
                                 className={classes.submit}>
                                 Add Courses
+                              </Button>
+                              <Button component={Link} to="/instituteConfirmation" onClick={() => this.check() } 
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                className={classes.submit}>
+                                CONFIRM
                               </Button>
                               <Button onClick={() => this.addInstituteToBlockchain()}
                                 type="submit"
