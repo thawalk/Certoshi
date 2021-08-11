@@ -1,6 +1,9 @@
 import React, {useState, useEffect} from "react";
 import { useParams } from 'react-router-dom';
 
+//Decrypt Function (Utility Function)
+import { decrypt } from './decrypt' 
+
 // Internal Components
 import Certificate from "./Certificate";
 import VerifyBadge from "./VerifyBadge";
@@ -18,6 +21,8 @@ import HDWalletProvider from "truffle-hdwallet-provider"
 import contract from "truffle-contract";
 import Certification from '../contracts/Certification.json'
 const CertificationInstance = contract(Certification);
+
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -113,7 +118,10 @@ function CertificateDisplay(){
         CertificationInstance.setProvider(web3.currentProvider);
         return CertificationInstance.deployed()
         .then(ins => ins.getData(certificateId))
-        .catch(err => Promise.reject("No certificate found with the input id"));
+        .catch(err => {
+            console.log(err)
+            Promise.reject("No certificate found with the input id")
+        });
     };
 
     useEffect(async () =>{
@@ -123,11 +131,11 @@ function CertificateDisplay(){
         connectWeb3()
         getCertificateData(id).then((data)=>{
             console.log("Here's the retrieved certificate data of id", id)    
-            console.log(data)            
+            console.log(data)
             setCertData((prev)=>({...prev,
-                candidateName: data[0],
+                candidateName: decrypt(data[0], id),
                 courseName: data[1],
-                creationDate: data[2]['c'][0], // note that this is a integer e.g. 1628627980432
+                creationDate: decrypt(data[2], id), // note that this is a integer e.g. 1628627980432
                 instituteName: data[3],
                 instituteAcronym: data[4],
                 instituteLink: data[5],

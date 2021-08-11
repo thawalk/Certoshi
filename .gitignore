@@ -7,3 +7,6 @@ client/build
 # Ignore build output of compiled contracts
 build/contracts/*
 client/src/contracts/*
+
+package.json
+package-lock.json
