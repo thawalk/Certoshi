@@ -18,8 +18,8 @@ module.exports = {
             // gasPrice: 10000000000,
         },
         development: {
-            host: "127.0.0.1",//process.env.LOCAL_ENDPOINT.split(":")[1].slice(2),
-            port: "7545",//process.env.LOCAL_ENDPOINT.split(":")[2],
+            host: process.env.LOCAL_ENDPOINT.split(":")[1].slice(2),
+            port: process.env.LOCAL_ENDPOINT.split(":")[2],
             network_id: "*",
         },
         compilers: {
