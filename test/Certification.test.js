@@ -115,6 +115,22 @@ contract("Certification", (accounts) => {
                 );
             }
         });
+        it("fails if course index given is invalid", async() => {
+            try {
+                const receipt = await certification.generateCertificate(
+                    mockCert.id,
+                    mockCert.candidateName,
+                    99, // list of courses in institute is 0 - 3 only
+                    mockCert.creationDate, { from: mockInstituteAcc }
+                );
+                const failure = assert.fail(certData);
+            } catch (err) {
+                assert(
+                    err.message.indexOf("revert") >= 0,
+                    "error message must contain revert"
+                );
+            }
+        });
     });
     describe("Data Retrieval for Certificate data", async() => {
         it("retrieves correct data for a valid certificate id", async() => {
@@ -165,14 +181,8 @@ contract("Certification", (accounts) => {
             // Check error message - note: need to handle error in client side
             try {
                 const certData = await certification.getData(invalidCertId);
-                console.log("***certData")
-                console.log(certData)
                 const failure = assert.fail(certData);
-                console.log("***failure")
-                console.log(failure)
             } catch (err) {
-                console.log("***err.msg")
-                console.log(err.message)
                 assert(
                     err.message.indexOf("revert") >= 0,
                     "error message must contain revert"
