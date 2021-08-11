@@ -11,8 +11,8 @@ contract("Certification", (accounts) => {
     let mockInvalidAcc = accounts[2]
     let mockCert = {
         candidateName: "John Lim",
-        courseName: "Computer Science and Design",
-        expirationDate: new Date().getTime(),
+        courseIndex: 0,
+        creationDate: new Date().getTime(),
         id: "5c0157fd3ff47a2a54075b01",
     };
     let mockInstitute = {
@@ -59,8 +59,8 @@ contract("Certification", (accounts) => {
             const receipt = await certification.generateCertificate(
                 mockCert.id,
                 mockCert.candidateName,
-                mockCert.courseName,
-                mockCert.expirationDate, { from: mockInstituteAcc }
+                mockCert.courseIndex,
+                mockCert.creationDate, { from: mockInstituteAcc }
             );
             assert.equal(receipt.logs.length, 1, "an event was not triggered");
             assert.equal(
@@ -80,8 +80,8 @@ contract("Certification", (accounts) => {
                 const receipt = await certification.generateCertificate(
                     mockCert.id,
                     mockCert.candidateName,
-                    mockCert.courseName,
-                    mockCert.expirationDate, { from: mockInvalidAcc }
+                    mockCert.courseIndex,
+                    mockCert.creationDate, { from: mockInvalidAcc }
                 );
                 const failure = assert.fail(receipt);
             } catch (err) {
@@ -96,16 +96,32 @@ contract("Certification", (accounts) => {
             const receipt = await certification2.generateCertificate(
                 mockCert.id,
                 mockCert.candidateName,
-                mockCert.courseName,
-                mockCert.expirationDate, { from: mockInstituteAcc }
+                mockCert.courseIndex,
+                mockCert.creationDate, { from: mockInstituteAcc }
             );
             try {
                 // generated certificate with same id again - should fail
                 const receipt = await certification2.generateCertificate(
                     mockCert.id,
                     mockCert.candidateName,
-                    mockCert.courseName,
-                    mockCert.expirationDate, { from: mockInstituteAcc }
+                    mockCert.courseIndex,
+                    mockCert.creationDate, { from: mockInstituteAcc }
+                );
+                const failure = assert.fail(certData);
+            } catch (err) {
+                assert(
+                    err.message.indexOf("revert") >= 0,
+                    "error message must contain revert"
+                );
+            }
+        });
+        it("fails if course index given is invalid", async() => {
+            try {
+                const receipt = await certification.generateCertificate(
+                    mockCert.id,
+                    mockCert.candidateName,
+                    99, // list of courses in institute is 0 - 3 only
+                    mockCert.creationDate, { from: mockInstituteAcc }
                 );
                 const failure = assert.fail(certData);
             } catch (err) {
@@ -128,13 +144,13 @@ contract("Certification", (accounts) => {
             );
             assert.equal(
                 certData[1],
-                mockCert.courseName,
+                mockInstituteCourses[mockCert.courseIndex]['course_name'],
                 "the course name of the certificate is incorrect"
             );
             assert.equal(
                 certData[2],
-                mockCert.expirationDate,
-                "the expiration date is incorrect"
+                mockCert.creationDate,
+                "the creation date is incorrect"
             );
 
             // Institute  Info
@@ -153,9 +169,14 @@ contract("Certification", (accounts) => {
                 mockInstitute.instituteLink,
                 "the institute link of the certificate is incorrect"
             );
+            assert.equal(
+                certData[6],
+                false,
+                "the revoked status of the certificate is incorrect"
+            );
         });
 
-        it("fails for invalid certificate ids that do not exist", async() => {
+        it("fails for invalid certificate id that does not exist", async() => {
             const invalidCertId = "unavailable5c0157fd3ff47a2a54075b02";
             // Check error message - note: need to handle error in client side
             try {
