@@ -221,7 +221,7 @@ class Admin extends React.Component {
   debugFiller() {
     console.log("Filling up form with pre-created institute");
     this.setState({
-      instituteAddress: "0x33aB3a73F632fb3f12769Adc878cB25ad2916e20",
+      instituteAddress: "",
       instituteName: "Singapore University of Technology and Design",
       instituteAcronym: "SUTD",
       instituteWebsite: "https://www.sutd.edu.sg/",
