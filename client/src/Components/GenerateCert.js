@@ -270,6 +270,9 @@ class GenerateCert extends React.Component {
 
   revokeCertificateFunction = async (event) => {
     event.preventDefault();
+    if (this.state.revokeCurrentState === "validate") {
+      return;
+    }
     this.setState({
       revokeCurrentState: "load",
     });
