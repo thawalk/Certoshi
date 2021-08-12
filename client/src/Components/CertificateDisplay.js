@@ -63,8 +63,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "0 0 10px 10px",
   },
   paper: {
-    // minHeight: "75vh",
-    // display: "flex",
+    marginTop: "30px",
     flexDirection: "column",
     alignItems: "center",
     padding: "0px",
@@ -72,7 +71,6 @@ const useStyles = makeStyles((theme) => ({
   },
   verificationBox: {
     backgroundColor: (props) => (props.revoked ? "#dd7e7e" : "#7ed7dd"),
-    //   background: "linear-gradient(90deg, rgba(126,215,221,1) 0%, rgba(126,221,214,1) 100%);",
     borderRadius: "5px 0 0 5px",
     marginRight: "-24px",
     padding: "12px 8px",
@@ -82,6 +80,14 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "22px",
     lineHeight: "20px",
     fontWeight: "600",
+    color: "white",
+  },
+  verificationDialog: {
+    backgroundColor: (props) => (props.revoked ? "#dd7e7e" : "#7ed7dd"),
+    background: (props) =>
+      props.revoked
+        ? "linear-gradient(129deg, rgba(221,126,173,1) 0%, rgba(221,126,126,1) 75%)"
+        : "linear-gradient(124deg, rgba(126,170,221,1) 0%, rgba(126,215,221,1) 76%)",
     color: "white",
   },
 }));
@@ -215,6 +221,7 @@ function CertificateDisplay() {
 export default CertificateDisplay;
 
 function SimpleDialog(props) {
+  const classes = useStyles(props);
   const { onClose, open, selectedValue, revoked } = props;
 
   const handleClose = () => {
@@ -227,64 +234,77 @@ function SimpleDialog(props) {
       aria-labelledby="simple-dialog-title"
       open={open}
     >
-      {!revoked && (
-        <>
-          <DialogTitle id="simple-dialog-title">
-            What are Verified Credentials?
-          </DialogTitle>
-          <DialogContent>
-            <Box>
-              Verified Credentials (VC) are tamper-proof credentials that can be
-              verified cryptographically.
-            </Box>
-            <Box m={2} />
-            <Box>
-              There are three essential components of verifiable credentials,
-              and they are:
-            </Box>
-            <Box>✔️ It is machine verifiable</Box>
-            <Box>✔️ It is secure and tamper-proof</Box>
-            <Box>✔️ Has been issued by a competent authority.</Box>
-          </DialogContent>
-        </>
-      )}
+      <div className={classes.verificationDialog}>
+        {!revoked && (
+          <>
+            <DialogTitle id="simple-dialog-title">
+              <Typography variant="h5">
+                What are Verified Credentials?
+              </Typography>
+            </DialogTitle>
+            <DialogContent>
+              <Box>
+                <b>Verified Credentials (VC)</b> are tamper-proof credentials
+                that can be verified cryptographically.
+              </Box>
+              <Box m={2} />
+              <Box>
+                There are three essential components of verifiable credentials,
+                and they are:
+              </Box>
+              <Box>✔️ It is machine verifiable</Box>
+              <Box>✔️ It is secure and tamper-proof</Box>
+              <Box>✔️ Has been issued by a competent authority.</Box>
+            </DialogContent>
+          </>
+        )}
 
-      {revoked && (
-        <>
-          <DialogTitle id="simple-dialog-title">
-            What are ❌ Revoked Credentials?
-          </DialogTitle>
-          <DialogContent>
-            <Box>
-              Verified Credentials (VC) are tamper-proof credentials that can be
-              verified cryptographically.
-            </Box>
-            <Box m={2} />
-            <Box>
-              There are three essential components of verifiable credentials,
-              and they are:
-            </Box>
-            <Box>➤ It is machine verifiable</Box>
-            <Box>➤ It is secure and tamper-proof</Box>
-            <Box>➤ Has been issued by a competent authority.</Box>
-            <Box m={3} />
-            <Box>
-              ❌ Revoked Credentials are credentials that are no longer valid
-              due to one or more of the following reasons:
-            </Box>
-            <Box>
-              ➤ Candidate has been found to be dishonest while obtaining the
-              credential, and credential has been revoked by institute
-            </Box>
-            <Box>➤ Credential has been issued wrongly by institute</Box>
-          </DialogContent>
-        </>
-      )}
-      <DialogActions>
-        <Button onClick={handleClose} color="primary" autoFocus>
-          Close
-        </Button>
-      </DialogActions>
+        {revoked && (
+          <>
+            <DialogTitle id="simple-dialog-title">
+              <Typography variant="h5">
+                What are Revoked Credentials?
+              </Typography>
+            </DialogTitle>
+            <DialogContent>
+              <Box>
+                <b>Verified Credentials (VC)</b> are tamper-proof credentials
+                that can be verified cryptographically.
+              </Box>
+              <Box m={2} />
+              <Box>
+                There are three essential components of verifiable credentials,
+                and they are:
+              </Box>
+              <Box>➤ It is machine verifiable</Box>
+              <Box>➤ It is secure and tamper-proof</Box>
+              <Box>➤ Has been issued by a competent authority.</Box>
+              <Box m={3} />
+              <Box>
+                <b>Revoked Credentials</b> are credentials that are no longer
+                valid due to one or more of the following reasons:
+              </Box>
+              <Box>
+                ❌ Candidate has been found to have dishonest conduct throughout
+                his/her academic journey, and the credential has been revoked by
+                the institute
+              </Box>
+              <Box>
+                ❌ Credential has been issued incorrectly by the institute
+              </Box>
+            </DialogContent>
+          </>
+        )}
+        <DialogActions>
+          <Button
+            onClick={handleClose}
+            autoFocus
+            style={{ color: revoked ? "#7ed7dd" : "#dd7e7e" }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </div>
     </Dialog>
   );
 }
