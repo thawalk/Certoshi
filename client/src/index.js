@@ -4,16 +4,17 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { MuiThemeProvider, createTheme } from "@material-ui/core/styles";
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
-    primary: { main: "#2196f3" }
+    primary: { main: "#363b98" },
+    secondary: { main: "#b09ce8" },
   },
   typography: {
-    "fontFamily": `"Open Sans", sans-serif, "Roboto", "Helvetica", "Arial"`,
-    useNextVariants: true
-  }
+    fontFamily: `"Open Sans", sans-serif, "Roboto", "Helvetica", "Arial"`,
+    useNextVariants: true,
+  },
 });
 
 ReactDOM.render(
