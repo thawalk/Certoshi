@@ -13,6 +13,7 @@ contract Certification {
 
     // Events
     event certificateGenerated(bytes32 _certificateId);
+    event certificateRevoked(bytes32 _certificateId);
 
     constructor(Institution _institution) public {
         owner = msg.sender;
@@ -79,5 +80,19 @@ contract Certification {
             "Certificate id does not exist"
         );
         return (temp.candidate_name, temp.course_name, temp.creation_date, temp.institute_name, temp.institute_acronym, temp.institute_link, temp.revoked);
+    }
+
+    function revokeCertificate(string memory _id) public {
+        require(institution.checkInstitutePermission(msg.sender) == true, "Institute account does not exist");
+        bytes32 byte_id = stringToBytes32(_id);
+        bytes memory tempEmptyStringNameTest = bytes(
+            certificates[byte_id].creation_date
+        );
+        require(
+            tempEmptyStringNameTest.length != 0,
+            "Certificate id does not exist"
+        );
+        certificates[byte_id].revoked = true;
+        emit certificateRevoked(byte_id);
     }
 }

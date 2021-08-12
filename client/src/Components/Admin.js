@@ -239,10 +239,6 @@ class Admin extends React.Component {
     const institution = new web3.eth.Contract(Institution.abi, institutionData.address)
     const convertToBlockChainStruct = []
 
-    // for (let [key, value] of map.entries()) {
-    //   console.log(key + " = " + value)
-    // }
-
     this.state.instituteCourses.forEach((value, key) => {
       convertToBlockChainStruct.push({'course_name': value})
     })
@@ -302,10 +298,7 @@ class Admin extends React.Component {
 
 
   check() {
-    // console.log(this.state)
-    // this.addToStore()
     console.log(this.state.instituteCourses)
-
   }
 
 
@@ -346,9 +339,7 @@ class Admin extends React.Component {
     }
     else {
       let instituteCoursesKeys = [...this.state.instituteCourses.keys()]
-      // console.log(instituteCoursesKeys)
       let id = Math.max(...instituteCoursesKeys) + 1
-      // console.log(this.state.instituteCourses)
       this.setState({
         instituteCourses: new Map(this.state.instituteCourses.set(id, this.state.course)),
         course: ""
@@ -371,17 +362,7 @@ class Admin extends React.Component {
 
   deleteCourse(keyToDelete) {
     console.log("delete getting called")
-    console.log(keyToDelete)
-    console.log(this.state.instituteCourses)
     const courses = new Map([...this.state.instituteCourses].filter(([k, v]) => k != keyToDelete))
-    console.log(courses);
-    // console.log(this.state.instituteCourses.get(keyToDelete))
-    // // this.state.instituteCourses.delete(keyToDelete)
-    // let copy = new Map(JSON.parse(JSON.stringify(Array.from(this.state.instituteCourses))))
-    // copy.delete(keyToDelete)
-    // // console.log(copy.get(keyToDelete))
-    // // console.log(copy)
-    // console.log(copy)
     this.setState({
       instituteCourses: courses
     })
@@ -500,8 +481,6 @@ class Admin extends React.Component {
                           onChange={(e) => this.handleTextFieldChangeCourse(e)}
                           autoFocus
                         />
-                        {/* <InputAdornment position='end'>
-                      </InputAdornment> */}
                       </FormControl>
                       <AddIcon button="true" onClick={(e) => this.addToCourseMap()} />
                     </div>
