@@ -309,7 +309,8 @@ class Admin extends React.Component {
         toast.warning("❕ Transaction rejected!");
       } else {
         // window.alert("Institute account address is not legit");
-        toast.error("❌ Institute account address is not legit!");
+        // toast.error("❌ Institute account address is not legit!");
+        toast.error("❌ Institute account already exits! Please check again!"); // Temporarily added to handle duplicate institute test case on rinkeby, that is not -32603
       }
     }
   }
