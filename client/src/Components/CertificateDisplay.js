@@ -6,7 +6,7 @@ import { decrypt } from "./decrypt";
 
 // Internal Components
 import VerifyBadge from "./VerifyBadge";
-import Loader from "./Loader";
+import { Loader } from "./Loader";
 
 // Material UI Components
 import {
@@ -193,7 +193,7 @@ function CertificateDisplay() {
     <>
       <Grid container className={classes.root} justifyContent="center">
         <Grid item xs={12} sm={8}>
-          {loading && <Loader SIZE={170} />}
+          {loading && <Loader text="Connecting..." />}
           {!loading && !certExists && (
             <p>This certificate id {id} does not exist!</p>
           )}

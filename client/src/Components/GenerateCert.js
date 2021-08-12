@@ -24,7 +24,9 @@ import Tabs from "@material-ui/core/Tabs";
 import Button from "@material-ui/core/Button";
 import OpenInNewOutlinedIcon from "@material-ui/icons/OpenInNewOutlined";
 import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
-import { Box, IconButton } from "@material-ui/core";
+import { Box, IconButton, CircularProgress } from "@material-ui/core";
+import { Error } from "./Error";
+import { Loader } from "./Loader";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -154,6 +156,7 @@ const styles = (theme) => ({
     marginLeft: "50px",
   },
 });
+
 class GenerateCert extends React.Component {
   state = {
     owner: "0x0",
@@ -451,9 +454,13 @@ class GenerateCert extends React.Component {
     return (
       <>
         {renderLoading ? (
-          <h1>Loading</h1>
+          <Loader text="Connecting..." />
         ) : renderMetaMaskError ? (
-          <h1>You need metamask to access this page</h1>
+          <Error
+            message="You are not using an Ethereum-based browser"
+            label="You could download Metamask on this browser or use an another ethereum-based browser"
+            buttonText="Done"
+          />
         ) : (
           // <h1>Welcome</h1>
           <></>
@@ -755,9 +762,11 @@ class GenerateCert extends React.Component {
           </>
         )}
         {isLegitInstitute === false && (
-          <p>
-            Please connect to the correct institute account and refresh the page
-          </p>
+          <Error
+            message="You are not connected to a valid institute account"
+            label="Please try again once you have connected to the right account"
+            buttonText="Done"
+          />
         )}
         <ToastContainer
           position="top-center"
