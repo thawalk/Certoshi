@@ -5,6 +5,8 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { Form } from "react-bootstrap";
 import Grid from "@material-ui/core/Grid";
+import { Loader } from "./Loader";
+import { Error } from "./Error";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -409,9 +411,13 @@ class Admin extends React.Component {
     return (
       <>
         {renderLoading ? (
-          <h1>Loading</h1>
+          <Loader text="Connecting..." />
         ) : renderMetaMaskError ? (
-          <h1>Metamask issue</h1>
+          <Error
+            message="You are not using an Ethereum-based browser"
+            label="You could download Metamask on this browser or use an another ethereum-based browser"
+            buttonText="Done"
+          />
         ) : renderAdmin ? (
           <>
             <Typography
@@ -433,7 +439,11 @@ class Admin extends React.Component {
             </Typography>
           </>
         ) : (
-          <h1>Not admin</h1>
+          <Error
+            message="You are not connected to a valid Central Authority account"
+            label="Please try again once you have connected to the right account"
+            buttonText="Done"
+          />
         )}
         {renderAdmin ? (
           <>

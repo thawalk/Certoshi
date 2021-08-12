@@ -6,6 +6,7 @@ import { decrypt } from "./decrypt";
 
 // Internal Components
 import VerifyBadge from "./VerifyBadge";
+import { Error } from "./Error";
 import { Loader } from "./Loader";
 
 // Material UI Components
@@ -162,26 +163,45 @@ function CertificateDisplay() {
   };
 
   useEffect(async () => {
-    console.log(process.env.REACT_APP_STAGE);
-    console.log(process.env.NODE_ENV);
-    console.log(process.env.REACT_APP_INFURA_PROJECT_ENDPOINT);
+    console.log("REACT_APP_STAGE", process.env.REACT_APP_STAGE);
+    console.log("NODE_ENV", process.env.NODE_ENV);
+    console.log(
+      "REACT_APP_INFURA_PROJECT_ENDPOINT",
+      process.env.REACT_APP_INFURA_PROJECT_ENDPOINT
+    );
     connectWeb3();
     getCertificateData(id)
       .then((data) => {
         console.log("Here's the retrieved certificate data of id", id);
         console.log(data);
-        setCertData((prev) => ({
-          ...prev,
-          candidateName: decrypt(data[0], id),
-          courseName: data[1],
-          creationDate: decrypt(data[2], id),
-          instituteName: data[3],
-          instituteAcronym: data[4],
-          instituteLink: data[5],
-          revoked: data[6],
-        }));
-        setCertExists(true);
-        setLoading(false);
+        try {
+          console.log("candidateName", data[0], decrypt(data[0], id));
+          console.log("courseName", data[1]);
+          console.log("creationDate", data[2], decrypt(data[2], id));
+          console.log("instituteName", data[3]);
+          console.log("instituteAcronym", data[4]);
+          console.log("instituteLink", data[5]);
+          console.log("revoked", data[6]);
+
+          setCertData((prev) => ({
+            ...prev,
+            candidateName: decrypt(data[0], id),
+            courseName: data[1],
+            creationDate: decrypt(data[2], id),
+            instituteName: data[3],
+            instituteAcronym: data[4],
+            instituteLink: data[5],
+            revoked: data[6],
+          }));
+
+          setCertExists(true);
+          setLoading(false);
+        } catch (err) {
+          // TODO: Remove this try catch block.
+          // Should not enter here at all. Catching just in case
+          setCertExists(false); //remove
+          setLoading(false);
+        }
       })
       .catch((err) => {
         console.log("Certificate of id", id, "does not exist");
@@ -195,7 +215,12 @@ function CertificateDisplay() {
         <Grid item xs={12} sm={8}>
           {loading && <Loader text="Connecting..." />}
           {!loading && !certExists && (
-            <p>This certificate id {id} does not exist!</p>
+            <Error
+              notFound
+              message={`Certificate ${id} does not exists!`}
+              label="Please make sure you have entered a valid certificate id that have been created"
+              buttonText="Okay"
+            />
           )}
           {!loading && certExists && (
             <>
@@ -375,7 +400,6 @@ function Certificate({
   instituteAcronym,
   instituteLink,
   revoked,
-  logo,
 }) {
   const classes = useStyles();
   const dateObject = new Date(creationDate);
