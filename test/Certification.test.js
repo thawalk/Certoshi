@@ -17,6 +17,7 @@ contract("Certification", (accounts) => {
         courseIndex: 0,
         creationDate: new Date().getTime(),
         id: "5c0157fd3ff47a2a54075b01",
+        id2: "6c0157fd3ff47a2a54075b01"
     };
     let mockInstitute = {
         instituteName: "Singapore University of Technology and Design",
@@ -178,6 +179,63 @@ contract("Certification", (accounts) => {
             // Check error message - note: need to handle error in client side
             try {
                 const certData = await certification.getData(invalidCertId);
+                const failure = assert.fail(certData);
+            } catch (err) {
+                assert(
+                    err.message.indexOf("revert") >= 0,
+                    "error message must contain revert"
+                );
+            }
+        });
+    });
+    describe("Revoke Certificate Based On Certificate ID", async () => {
+        it("revokes certificate correctly", async () => {
+             await certification.generateCertificate(
+                mockCert.id2,
+                encrypt(mockCert.candidateName, mockCert.id2),
+                mockCert.courseIndex,
+                encrypt(mockCert.creationDate, mockCert.id2), { from: mockInstituteAcc }
+            );
+            const receipt = await certification.revokeCertificate(
+                mockCert.id2, { from: mockInstituteAcc }
+            );
+            assert.equal(receipt.logs.length, 1, "an event was not triggered");
+            assert.equal(
+                receipt.logs[0].event,
+                "certificateRevoked",
+                "the event type is incorrect"
+            );
+            assert.equal(
+                web3.utils.toAscii(receipt.logs[0].args._certificateId).slice(0, 24),
+                mockCert.id2,
+                "the certificate id is incorrect"
+            );
+            const certData = await certification.getData(mockCert.id2);
+            assert.equal(
+                certData[6],
+                true,
+                "the revoked status of the certificate is incorrect"
+            );
+        });
+        it("fails if function is called by an invalid institute account", async () => {
+            try {
+                // generated certificate with invalid sender account - should fail
+                const receipt = await certification.revokeCertificate(
+                    mockCert.id
+                );
+                const failure = assert.fail(receipt);
+            } catch (err) {
+                assert(
+                    err.message.indexOf("revert") >= 0,
+                    "error message must contain revert"
+                );
+            }
+        });
+        it("fails for invalid certificate id that does not exist", async () => {
+            const invalidCertId = "unavailable5c0157fd3ff47a2a54075b02";
+            // Check error message - note: need to handle error in client side
+            try {
+                const certData = await certification.revokeCertificate(invalidCertId);
                 const failure = assert.fail(certData);
             } catch (err) {
                 assert(

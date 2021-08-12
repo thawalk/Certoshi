@@ -53,13 +53,7 @@ const DynamicLayoutRoute = props => {
 
 
 class App extends Component {
-  
-  
-
   render() {
-
-   
-
     return (
       <div className="App" style={{ backgroundColor: "#fafafa" }}>
         <Switch>
