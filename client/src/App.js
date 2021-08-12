@@ -1,12 +1,18 @@
 import React, { Component, useState } from "react";
 import "./App.css";
 import { Switch, Route, Redirect } from "react-router-dom";
-import Admin from "./Components/Admin";
-import GenerateCert from "./Components/GenerateCert";
-import CertificateDisplay from "./Components/CertificateDisplay";
+
+// Nav
 import NavBarInstitute from "./Components/NavBarInstitute";
 import NavBarSysAdmin from "./Components/NavBarSysAdmin";
 import NavBarLanding from "./Components/NavBarLanding";
+
+// Pages
+import Home from "./Components/Home";
+import Admin from "./Components/Admin";
+import GenerateCert from "./Components/GenerateCert";
+import CertificateDisplay from "./Components/CertificateDisplay";
+import ViewCert from "./Components/ViewCert";
 
 const DynamicLayoutRoute = (props) => {
   const { component: RoutedComponent, layout, ...rest } = props;
@@ -53,7 +59,7 @@ class App extends Component {
           <DynamicLayoutRoute
             exact
             path="/"
-            component={Admin}
+            component={Home}
             layout="LANDING"
           />
           <DynamicLayoutRoute
@@ -72,6 +78,7 @@ class App extends Component {
             path="/certificate/:id"
             component={CertificateDisplay}
           />
+          <DynamicLayoutRoute path="/view" component={ViewCert} />
           <DynamicLayoutRoute path="*">
             <Redirect to="/" />
           </DynamicLayoutRoute>

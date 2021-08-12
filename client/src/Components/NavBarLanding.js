@@ -163,14 +163,6 @@ class NavBarLanding extends React.Component {
             >
               Certoshi
             </Typography>
-            {/* <div className={classes.generateCertificate}>
-              <Typography
-                // variant="h6"
-                noWrap
-              >
-                Verified Credentials
-              </Typography>
-            </div> */}
             <div className={classes.grow} />
             <div className={classes.sectionDesktop}>
               <IconButton
