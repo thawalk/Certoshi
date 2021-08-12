@@ -620,10 +620,7 @@ class GenerateCert extends React.Component {
                                   size="small"
                                   onClick={() => {
                                     navigator.clipboard.writeText(
-                                      `${window.location.href.slice(
-                                        0,
-                                        -window.location.pathname.length
-                                      )}/certificate/${certificateId}`
+                                      certificateId
                                     );
                                   }}
                                 >
@@ -646,32 +643,9 @@ class GenerateCert extends React.Component {
                                 >
                                   Open
                                 </Button>
-
-                                {/* <IconButton
-                                  color="primary"
-                                  onClick={() => {
-                                    console.log("Open new tab");
-                                  }}
-                                >
-                                  <OpenInNewOutlinedIcon />
-                                </IconButton> */}
                               </Box>
                             </>
                           )}
-                          {/* <IconButton
-                            color="primary"
-                            size="small"
-                            onClick={() => {
-                              navigator.clipboard.writeText(
-                                `${window.location.href.slice(
-                                  0,
-                                  -window.location.pathname.length
-                                )}/certificate/${this.state.certificateId}`
-                              );
-                            }}
-                          >
-                            <FileCopyOutlinedIcon />
-                          </IconButton> */}
 
                           {txnFailed && (
                             <div>
@@ -692,7 +666,7 @@ class GenerateCert extends React.Component {
                           <TextField
                             required
                             id="revoke_certificate_id"
-                            label="Revoke Certificate ID"
+                            label="Certificate ID (to be revoked)"
                             className={classes.instituteField}
                             defaultValue={revokeCertificateId}
                             margin="normal"
@@ -706,13 +680,52 @@ class GenerateCert extends React.Component {
                             className={classes.submitBtn}
                           />
                           {revokeCurrentState === "validate" && (
-                            <Typography
-                              variant="caption"
-                              color="inherit"
-                              className={classes.submitBtn}
-                            >
-                              Certificate with id {revokeCertificateId} revoked
-                            </Typography>
+                            <>
+                              <Box
+                                display="flex"
+                                justifyContent="center"
+                                alignItems="center"
+                              >
+                                <Typography
+                                  variant="caption"
+                                  color="inherit"
+                                  className={classes.submitBtn}
+                                  style={{ marginRight: "10px" }}
+                                >
+                                  Revoked Certificate with id{" "}
+                                  {revokeCertificateId}
+                                </Typography>
+
+                                <IconButton
+                                  color="primary"
+                                  size="small"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(
+                                      revokeCertificateId
+                                    );
+                                  }}
+                                >
+                                  <FileCopyOutlinedIcon />
+                                </IconButton>
+                                <Button
+                                  variant="outlined"
+                                  color="primary"
+                                  size="small"
+                                  className={classes.button}
+                                  endIcon={<OpenInNewOutlinedIcon />}
+                                  onClick={() => {
+                                    window.open(
+                                      `${window.location.href.slice(
+                                        0,
+                                        -window.location.pathname.length
+                                      )}/certificate/${revokeCertificateId}`
+                                    );
+                                  }}
+                                >
+                                  Open
+                                </Button>
+                              </Box>
+                            </>
                           )}
 
                           {revokeTxnFailed && (
