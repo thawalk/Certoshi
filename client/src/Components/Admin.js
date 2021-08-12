@@ -190,7 +190,7 @@ class Admin extends React.Component {
               renderAdmin: false,
             });
             // window.alert("You are not the admin");
-            toast.warning("❕ You are not the admin");
+            toast.warning("❕ You are not authorized to access this page");
           }
         } catch (error) {
           console.log("error is", error);
