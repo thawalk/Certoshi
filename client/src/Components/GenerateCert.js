@@ -47,8 +47,9 @@ function TabPanel(props) {
 const StyledTabs = withStyles({
   indicator: {
     display: "flex",
+    height: "3px",
     justifyContent: "center",
-    backgroundColor: "black", //'#EC1C24',
+    backgroundColor: "#b09ce8",
   },
 })((props) => <Tabs {...props} />);
 
@@ -65,6 +66,9 @@ const StyledTab = withStyles((theme) => ({
 }))((props) => <Tab {...props} />);
 
 const styles = (theme) => ({
+  appbar: {
+    background: "linear-gradient(109.96deg,#363e98,#8ac6ff),#fff",
+  },
   tabPanel: {
     height: "100%",
     overflowY: "scroll",
@@ -496,15 +500,18 @@ class GenerateCert extends React.Component {
                   </AppBar>
                   <div style={styles.tabPanel}>
                     <TabPanel value={tabValue} index={0}>
-                      {/* <Typography variant="h3" color="inherit">
-                                                Certificate Generation Form
-                                            </Typography> */}
                       <form
                         className={classes.container}
                         autoComplete="off"
                         onSubmit={this.submitData}
                         style={{ marginTop: "3vh" }}
                       >
+                        <Grid item xs={12} sm={12}>
+                          <Typography variant="subtitle1">
+                            Input the certificate details below to generate a
+                            certificate
+                          </Typography>
+                        </Grid>
                         <Grid item xs={12} sm={12}>
                           <TextField
                             required
@@ -663,10 +670,15 @@ class GenerateCert extends React.Component {
                         style={{ marginTop: "3vh" }}
                       >
                         <Grid item xs={12} sm={12}>
+                          <Typography variant="subtitle1">
+                            Input the id of the certificate you want to revoke
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12} sm={12}>
                           <TextField
                             required
                             id="revoke_certificate_id"
-                            label="Certificate ID (to be revoked)"
+                            label="Certificate ID"
                             className={classes.instituteField}
                             defaultValue={revokeCertificateId}
                             margin="normal"
