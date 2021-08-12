@@ -164,6 +164,7 @@ class GenerateCert extends React.Component {
     isCorrectInstitute: false,
     renderLoading: true,
     renderMetaMaskError: false,
+    networkError: false,
     instituteName: "",
     instituteAcronym: "",
     instituteWebsite: "",
@@ -220,11 +221,23 @@ class GenerateCert extends React.Component {
     if (web3 === undefined) {
       return;
     }
+
     const accounts = await web3.eth.getAccounts();
     let caller = accounts[0];
 
     const networkId = await web3.eth.net.getId();
+    if (!(networkId in Institution.networks)) {
+      console.log("You are currently on this network:", networkId);
+      this.setState({ networkError: true });
+      toast.warning(
+        "❕ Please make sure you are connected to the correct network"
+      );
+      return;
+    }
+
     const institutionData = Institution.networks[networkId];
+    console.log(institutionData);
+    console.log(Institution);
     const institution = new web3.eth.Contract(
       Institution.abi,
       institutionData.address
@@ -440,6 +453,7 @@ class GenerateCert extends React.Component {
     const {
       renderLoading,
       renderMetaMaskError,
+      networkError,
       instituteName,
       instituteAcronym,
       instituteWebsite,
@@ -466,8 +480,14 @@ class GenerateCert extends React.Component {
             buttonText="Done"
           />
         ) : (
-          // <h1>Welcome</h1>
           <></>
+        )}
+        {networkError && (
+          <Error
+            message="You are not connected to the correct network on Ethereum"
+            label="Please try again once you have connected to the right network (Rinkeby testnet)"
+            buttonText="Done"
+          />
         )}
 
         {isLegitInstitute && (
