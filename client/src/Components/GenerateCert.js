@@ -27,6 +27,7 @@ import FileCopyOutlinedIcon from "@material-ui/icons/FileCopyOutlined";
 import { Box, IconButton, CircularProgress } from "@material-ui/core";
 import { Error } from "./Error";
 import { Loader } from "./Loader";
+import LoopOutlinedIcon from "@material-ui/icons/LoopOutlined";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -596,7 +597,7 @@ class GenerateCert extends React.Component {
                             </InputLabel>
                             <Select
                               native
-                              value={this.state.course}
+                              value={this.state.courseIndex}
                               onChange={this.handleChange("courseIndex")}
                               label="Courses"
                             >
@@ -612,10 +613,34 @@ class GenerateCert extends React.Component {
                           </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={12} justifyContent>
-                          <SubmitAnimation
-                            currentState={currentState}
-                            className={classes.submitBtn}
-                          />
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                          >
+                            <SubmitAnimation
+                              currentState={currentState}
+                              className={classes.submitBtn}
+                            />
+                            {currentState === "validate" && (
+                              <IconButton
+                                style={{ marginTop: "16px" }}
+                                color="primary"
+                                variant="contained"
+                                onClick={() => {
+                                  this.setState({
+                                    currentState: "normal",
+                                    firstname: "",
+                                    lastname: "",
+                                    courseIndex: 0,
+                                  });
+                                }}
+                              >
+                                <LoopOutlinedIcon />
+                              </IconButton>
+                            )}
+                          </Box>
+
                           {currentState === "validate" && (
                             <>
                               <Box
@@ -691,16 +716,39 @@ class GenerateCert extends React.Component {
                             label="Certificate ID"
                             className={classes.instituteField}
                             defaultValue={revokeCertificateId}
+                            value={revokeCertificateId}
                             margin="normal"
                             variant="outlined"
                             onChange={this.handleChange("revokeCertificateId")}
                           />
                         </Grid>
                         <Grid item xs={12} sm={12}>
-                          <SubmitAnimation
-                            currentState={revokeCurrentState}
-                            className={classes.submitBtn}
-                          />
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                          >
+                            <SubmitAnimation
+                              currentState={revokeCurrentState}
+                              className={classes.submitBtn}
+                            />
+                            {revokeCurrentState === "validate" && (
+                              <IconButton
+                                style={{ marginTop: "16px" }}
+                                color="primary"
+                                variant="contained"
+                                onClick={() => {
+                                  this.setState({
+                                    revokeCurrentState: "normal",
+                                    revokeCertificateId: "",
+                                  });
+                                }}
+                              >
+                                <LoopOutlinedIcon />
+                              </IconButton>
+                            )}
+                          </Box>
+
                           {revokeCurrentState === "validate" && (
                             <>
                               <Box
