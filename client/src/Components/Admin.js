@@ -220,7 +220,7 @@ class Admin extends React.Component {
       instituteAcronym: "NUS",
       instituteWebsite: "nus.com",
       instituteCourses: new Map([[1, "ASD"], [2, "EPD"]])
-      
+
     })
   }
 
@@ -240,7 +240,7 @@ class Admin extends React.Component {
     const convertToBlockChainStruct = []
 
     this.state.instituteCourses.forEach((value, key) => {
-      convertToBlockChainStruct.push({'course_name': value})
+      convertToBlockChainStruct.push({ 'course_name': value })
     })
 
     const provider = window.ethereum;
@@ -266,13 +266,13 @@ class Admin extends React.Component {
           .then((res) => {
             this.clearValues()
             this.setState({
-                openDialog: false,
-                instituteAddress:"",
-                instituteName:"",
-                instituteAcronym: "",
-                instituteWebsite: "",
-                instituteCourses: new Map(),
-                course: ""
+              openDialog: false,
+              instituteAddress: "",
+              instituteName: "",
+              instituteAcronym: "",
+              instituteWebsite: "",
+              instituteCourses: new Map(),
+              course: ""
             })
           })
       }
@@ -301,33 +301,11 @@ class Admin extends React.Component {
     console.log(this.state.instituteCourses)
   }
 
-
-  handleTextFieldChangeAddress(e) {
+  handleChange = (name) => (event) => {
     this.setState({
-      instituteAddress: e.target.value
-    })
-  }
-
-  handleTextFieldChangeName(e) {
-    this.setState({
-      instituteName: e.target.value
-    })
-  }
-  handleTextFieldChangeAcronym(e) {
-    this.setState({
-      instituteAcronym: e.target.value
-    })
-  }
-  handleTextFieldChangeWebsite(e) {
-    this.setState({
-      instituteWebsite: e.target.value
-    })
-  }
-  handleTextFieldChangeCourse(e) {
-    this.setState({
-      course: e.target.value
-    })
-  }
+      [name]: event.target.value,
+    });
+  };
 
   addToCourseMap() {
     if (this.state.instituteCourses.size === 0) {
@@ -345,19 +323,6 @@ class Admin extends React.Component {
         course: ""
       })
     }
-  }
-
-
-  routeToDiffPage() {
-    this.props.history.push({
-      pathname: "/instituteConfirmation",
-      state: {
-        instituteName: this.state.instituteName,
-        instituteAcronym: this.state.instituteAcronym,
-        instituteCourses: this.state.instituteCourses,
-        instituteWebsite: this.state.instituteWebsite
-      }
-    })
   }
 
   deleteCourse(keyToDelete) {
@@ -433,7 +398,7 @@ class Admin extends React.Component {
                         label="Institute Account Address"
                         type="name"
                         value={instituteAddress}
-                        onChange={(e) => this.handleTextFieldChangeAddress(e)}
+                        onChange={this.handleChange("instituteAddress")}
                         autoFocus
                       />
                     </FormControl>
@@ -444,7 +409,7 @@ class Admin extends React.Component {
                         label="Institute Name"
                         type="name"
                         value={instituteName}
-                        onChange={(e) => this.handleTextFieldChangeName(e)}
+                        onChange={this.handleChange("instituteName")}
                         autoFocus
                       />
                     </FormControl>
@@ -455,7 +420,7 @@ class Admin extends React.Component {
                         label="Institute Acronym"
                         type="name"
                         value={instituteAcronym}
-                        onChange={(e) => this.handleTextFieldChangeAcronym(e)}
+                        onChange={this.handleChange("instituteAcronym")}
                         autoFocus
                       />
                     </FormControl>
@@ -466,7 +431,7 @@ class Admin extends React.Component {
                         label="Institute Website"
                         type="name"
                         value={instituteWebsite}
-                        onChange={(e) => this.handleTextFieldChangeWebsite(e)}
+                        onChange={this.handleChange("instituteWebsite")}
                         autoFocus
                       />
                     </FormControl>
@@ -478,7 +443,7 @@ class Admin extends React.Component {
                           label="Add course"
                           type="name"
                           value={course}
-                          onChange={(e) => this.handleTextFieldChangeCourse(e)}
+                          onChange={this.handleChange("course")}
                           autoFocus
                         />
                       </FormControl>
@@ -554,22 +519,7 @@ class Admin extends React.Component {
                         </Button>
                       </DialogActions>
                     </Dialog>
-                    {/* <Button component={Link} to="/instituteConfirmation" onClick={() => this.check() } 
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                className={classes.submit}>
-                                CONFIRM
-                              </Button> */}
-                    {/* <Button onClick={() => this.routeToDiffPage()}
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      className={classes.submit}>
-                      CONFIRM
-                    </Button>
+                    {/*
                     <Button onClick={() => this.addInstituteToBlockchain()}
                       type="submit"
                       fullWidth

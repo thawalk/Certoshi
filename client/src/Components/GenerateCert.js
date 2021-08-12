@@ -162,7 +162,10 @@ class GenerateCert extends React.Component {
         courseIndex: 0,
         creationDate: null,
         txnFailed: false,
-        tabValue: 0
+        tabValue: 0,
+        revokeCertificateId: "",
+        revokeCurrentState: "normal",
+        revokeTxnFailed: false,
     };
 
     async componentWillMount() {
@@ -245,14 +248,20 @@ class GenerateCert extends React.Component {
     handleChange = (name) => (event) => {
         this.setState({
             [name]: event.target.value,
+            currentState: "normal",
+            revokeCurrentState: "normal"
         });
     };
 
-    async revokeCertificate() {
+    revokeCertificateFunction = async (event) => {
+        event.preventDefault();
+        this.setState({
+            revokeCurrentState: "load",
+        });
         const web3 = window.web3;
-        if (web3 === undefined) {
-            return;
-        }
+        // if (web3 === undefined) {
+        //     return;
+        // }
         const accounts = await web3.eth.getAccounts();
         let caller = accounts[0];
 
@@ -262,19 +271,44 @@ class GenerateCert extends React.Component {
             Certification.abi,
             certificationData.address
         );
-        const certificate_id = "f0f7373a-2b69-4ea7-b78a-371ebe485d7a"
+        // const certificate_id = "f0f7373a-2b69-4ea7-b78a-371ebe485d7a"
+        const { revokeCertificateId } = this.state;
         try {
             await certification.methods
-                .revokeCertificate(certificate_id)
+                .revokeCertificate(revokeCertificateId)
                 .send({ from: caller, gas: 2100000 })
                 .on("receipt", function (receipt) {
                     // ----- here can use a state or smth, to display a success message -----
                     console.log(receipt);
                     console.log(receipt.events)
-                })
+                }).then((res) => {
+                    // console.log("Success in revoking certificate:", revokeCertificateId);
+                    // alert(`Successfully revoked the certificate ${revokeCertificateId}`);
+                    this.setState({
+                        revokeCurrentState: "validate",
+                        certificateId: revokeCertificateId,
+                        revokeTxnFailed: false,
+                    });
+                });
         } catch (error) {
-            // alert("Account address is wrong or does not exist in the smart contract");
-            this.setState({ isLegitInstitute: false });
+            console.log(error);
+            console.log(error.code);
+            this.setState({
+                revokeCurrentState: "normal",
+                revokeTxnFailed: true,
+                revokeCertificateId: revokeCertificateId
+            });
+            if (error.code == -32603) {
+                // -32603:
+                // 1) certificate id already exists - won't encounter this
+                // 2) transaction failed due to gas problems
+                window.alert(
+                    "Transaction failed. Please check that you have set enough gas limit."
+                );
+            }
+            if (error.code == 4001) {
+                window.alert("Transaction rejected");
+            }
         }
     }
 
@@ -286,7 +320,7 @@ class GenerateCert extends React.Component {
         this.setState({
             currentState: "load",
         });
-        this.setState({ currentState: "load" });
+        // this.setState({ currentState: "load" });
         const { firstname, lastname, courseIndex } = this.state;
         let candidateName = `${firstname} ${lastname}`;
         // let assignDate = new Date(assignedOn).getTime();
@@ -312,20 +346,16 @@ class GenerateCert extends React.Component {
                 .generateCertificate(
                     certId,
                     encrypt(candidateName, certId),
-                    // use a dropdown menu to select course - change to this.state.courseName
                     courseIndex,
-                    // use like a date picker and convert to utc - change to this.state.creationDate
                     encrypt(creationDate, certId)
                 )
                 .send({ from: caller, gas: 2100000 })
                 .on("receipt", function (receipt) {
-                    // ----- here can use a state or smth, to display a success message -----
                     console.log(receipt);
                 })
                 .then((res) => {
-                    console.log("Success in generating certificate:", certId);
-                    alert(`Successfully generated a certificate (${certId})!`);
-                    // This doesnt seem to change currentState to validate?
+                    // console.log("Success in generating certificate:", certId);
+                    // alert(`Successfully generated a certificate (${certId})!`);
                     this.setState({
                         currentState: "validate",
                         certificateId: certId,
@@ -351,12 +381,12 @@ class GenerateCert extends React.Component {
             if (error.code == 4001) {
                 window.alert("Transaction rejected");
             }
+            // this.setState({
+            //     currentState: "fail",
+            //     certificateId: certId,
+            // });
         }
 
-        this.setState({
-            currentState: "fail",
-            certificateId: certId,
-        });
     };
 
     async componentWillMount() {
@@ -393,7 +423,10 @@ class GenerateCert extends React.Component {
             certificateId,
             currentState,
             txnFailed,
-            tabValue
+            tabValue,
+            revokeCertificateId,
+            revokeCurrentState,
+            revokeTxnFailed
         } = this.state;
         return (
             <>
@@ -402,7 +435,8 @@ class GenerateCert extends React.Component {
                 ) : renderMetaMaskError ? (
                     <h1>You need metamask to access this page</h1>
                 ) : (
-                    <h1>Welcome</h1>
+                    // <h1>Welcome</h1>
+                    <></>
                 )}
 
                 {isLegitInstitute && (
@@ -411,13 +445,14 @@ class GenerateCert extends React.Component {
                             <Grid item xs={8} sm={8}>
                                 <Paper className={classes.paper}>
                                     <AppBar position="static" className={classes.appbar}>
-                                        <StyledTabs value={tabValue} onChange={this.handleTabChange} aria-label="simple tabs example" variant="fullWidth">
+                                        <StyledTabs value={tabValue} onChange={this.handleTabChange} aria-label="simple tabs example" variant="fullWidth"  >
                                             <StyledTab label="Generate Certificate" {...this.a11yProps(0)} />
-                                            <StyledTab label="Animations" {...this.a11yProps(1)} />
+                                            <StyledTab label="Revoke Certificate" {...this.a11yProps(1)} />
                                         </StyledTabs>
                                     </AppBar>
                                     <div style={styles.tabPanel}>
                                         <TabPanel value={tabValue} index={0} >
+
                                             {/* <Typography variant="h3" color="inherit">
                                                 Certificate Generation Form
                                             </Typography> */}
@@ -425,6 +460,7 @@ class GenerateCert extends React.Component {
                                                 className={classes.container}
                                                 autoComplete="off"
                                                 onSubmit={this.submitData}
+                                                style={{ marginTop: '3vh' }}
                                             >
                                                 <Grid item xs={12} sm={12}>
                                                     <TextField
@@ -536,18 +572,52 @@ class GenerateCert extends React.Component {
                                                 </Grid>
                                             </form>
                                         </TabPanel>
-                                        <TabPanel value={tabValue} index={1} ><h1>hello</h1></TabPanel>
+                                        <TabPanel value={tabValue} index={1} >
+                                        <form
+                                                className={classes.container}
+                                                autoComplete="off"
+                                                onSubmit={this.revokeCertificateFunction}
+                                                style={{ marginTop: '3vh' }}
+                                            >
+                                                <Grid item xs={12} sm={12}>
+                                                    <TextField
+                                                        required
+                                                        id="revoke_certificate_id"
+                                                        label="Revoke Certificate ID"
+                                                        className={classes.instituteField}
+                                                        defaultValue={revokeCertificateId}
+                                                        margin="normal"
+                                                        variant="outlined"
+                                                        onChange={this.handleChange("revokeCertificateId")}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} sm={12}>
+                                                    <SubmitAnimation
+                                                        currentState={revokeCurrentState}
+                                                        className={classes.submitBtn}
+                                                    />
+                                                    {revokeCurrentState === "validate" && (
+                                                        <Typography
+                                                            variant="caption"
+                                                            color="inherit"
+                                                            className={classes.submitBtn}
+                                                        >
+                                                            Certificate with id {revokeCertificateId} revoked
+                                                        </Typography>
+                                                    )}
+
+                                                    {revokeTxnFailed && (
+                                                        <div>
+                                                            Failed to revoke certificate, please try again.
+                                                        </div>
+                                                    )}
+                                                </Grid>
+                                            </form>
+                                        </TabPanel>
                                     </div>
 
                                 </Paper>
-                                <Button onClick={() => this.revokeCertificate()}
-                                    type="submit"
-                                    fullWidth
-                                    variant="contained"
-                                    color="primary"
-                                    className={classes.submit}>
-                                    Revoke
-                                </Button>
+
                             </Grid>
                         </Grid>
                     </>
