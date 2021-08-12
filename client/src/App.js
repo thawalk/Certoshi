@@ -1,6 +1,6 @@
 import React, { Component, useState } from "react";
 import "./App.css";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import Admin from "./Components/Admin";
 import GenerateCert from "./Components/GenerateCert";
 import CertificateDisplay from "./Components/CertificateDisplay";
@@ -72,6 +72,9 @@ class App extends Component {
             path="/certificate/:id"
             component={CertificateDisplay}
           />
+          <DynamicLayoutRoute path="*">
+            <Redirect to="/" />
+          </DynamicLayoutRoute>
         </Switch>
       </div>
     );
