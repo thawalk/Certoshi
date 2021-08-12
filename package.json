@@ -9,7 +9,7 @@
         "copy-contracts-build": "echo \" Copying build/contracts/* files into client/src/contracts \" && copyfiles -f build/contracts/* client/src/contracts",
         "deploy:local": "(truffle.cmd migrate --reset || truffle migrate --reset) && npm run copy-contracts-build",
         "deploy:testnet": "(truffle.cmd migrate -f 2 --network rinkeby || truffle migrate -f 2 --network rinkeby) && npm run copy-contracts-build",
-        "ganache": "ganache-cli -p 8545 &",
+        "ganache": "ganache-cli -p 8545 &"
     },
     "author": "Tharun",
     "license": "MIT",

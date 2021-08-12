@@ -1,18 +1,12 @@
 import React, { Component, useState } from "react";
 import "./App.css";
-import SignIn from "./Components/SignIn";
 import { Switch, Route } from "react-router-dom";
-import NavBar from "./Components/NavBar";
-import Homepage from "./Components/Homepage";
-import Dashboard from "./Components/Dashboard";
-import GenerateForm from './Components/GenerateForm';
 import Admin from './Components/Admin';
 import GenerateCert from './Components/GenerateCert';
 import CertificateDisplay from './Components/CertificateDisplay'
 import NavBarInstitute from "./Components/NavBarInstitute";
 import NavBarSysAdmin from "./Components/NavBarSysAdmin";
 import NavBarLanding from "./Components/NavBarLanding";
-import InstituteConfirmation from "./Components/InstituteConfirmation";
 import { useBetween } from "use-between";
 
 const DynamicLayoutRoute = props => {
@@ -70,13 +64,9 @@ class App extends Component {
     return (
       <div className="App" style={{ backgroundColor: "#fafafa" }}>
         <Switch>
-          <DynamicLayoutRoute exact path="/" component={Homepage} />
           <DynamicLayoutRoute exact path="/admin" component={Admin} layout = "SYSADMIN" />
-          <DynamicLayoutRoute exact path="/generateCert" component={GenerateCert}/>
-          <DynamicLayoutRoute path="/login" component={SignIn} />
-          <DynamicLayoutRoute path="/generate-certificate" component={GenerateForm} />
+          <DynamicLayoutRoute exact path="/generateCert" component={GenerateCert} layout = "INSTITUTE"/>
           <DynamicLayoutRoute path="/display/certificate/:id" component={CertificateDisplay} />
-          <DynamicLayoutRoute path="/instituteConfirmation" component={InstituteConfirmation} layout = "SYSADMIN" />
         </Switch>
       </div>
     );
