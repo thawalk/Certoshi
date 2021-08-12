@@ -40,7 +40,6 @@
         "jquery": "^3.5.0",
         "mongoose": "^5.4.0",
         "nodemon": "^1.14.12",
-        "scrypt": "github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
         "solc": "^0.4.25",
         "style-loader": "^0.13.1",
         "truffle-contract": "^1.1.11",
