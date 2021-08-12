@@ -30,7 +30,6 @@
         "chai-as-promised": "^7.1.1"
     },
     "dependencies": {
-        "scrypt": "github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
         "babel-loader": "8.0.4",
         "body-parser": "^1.18.2",
         "chalk": "^2.4.1",
@@ -41,11 +40,12 @@
         "jquery": "^3.5.0",
         "mongoose": "^5.4.0",
         "nodemon": "^1.14.12",
+        "scrypt": "github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
         "solc": "^0.4.25",
         "style-loader": "^0.13.1",
         "truffle-contract": "^1.1.11",
         "truffle-hdwallet-provider": "0.0.6",
         "uuid": "^8.3.2",
-        "web3": "1.5.1"
+        "web3": "^1.0.0-beta.37"
     }
 }

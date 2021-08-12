@@ -6,7 +6,6 @@
     "node": ">=8.11.2"
   },
   "dependencies": {
-    "scrypt": "github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^3.0.1",
     "babel-loader": "^8.0.4",
@@ -20,7 +19,10 @@
     "react-scripts": "2.1.1",
     "react-toastify": "^7.0.4",
     "use-between": "0.0.18",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "web3": "1.5.1",
+    "truffle-contract": "^1.1.11",
+    "truffle-hdwallet-provider": "0.0.6"
   },
   "scripts": {
     "start": "react-scripts start",
