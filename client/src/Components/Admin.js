@@ -118,6 +118,7 @@ class Admin extends React.Component {
     renderLoading: true,
     renderAdmin: false,
     renderMetaMaskError: false,
+    networkError: false,
     instituteAddress: "",
     instituteName: "",
     instituteAcronym: "",
@@ -157,11 +158,25 @@ class Admin extends React.Component {
   // Load contract
   async loadBlockChainDataAndCheckAdmin() {
     const web3 = window.web3;
+    // if (web3 === undefined) { // TODO: You can use this
+    //   return;
+    // }
     try {
       const accounts = await web3.eth.getAccounts();
       let caller = accounts[0];
       console.log("caller", caller);
+
       const networkId = await web3.eth.net.getId();
+      // TODO: You can use this - can remove the try catch blocks
+      // if (!(networkId in Institution.networks)) {
+      //   console.log("You are currently on this network:", networkId);
+      //   this.setState({ networkError: true });
+      //   toast.warning(
+      //     "❕ Please make sure you are connected to the correct network"
+      //   );
+      //   return;
+      // }
+
       console.log("networkId", networkId);
       // Load institution contract
       const institutionData = Institution.networks[networkId];
@@ -209,6 +224,18 @@ class Admin extends React.Component {
     } catch {
       // window.alert('No accounts detected')
       console.log("no accounts detected");
+
+      // When this block is reached, most likely due to user on wrong network
+      console.log("You are on the wrong network!");
+      toast.warning(
+        "❕ Please make sure you are connected to the correct network"
+      );
+      this.setState({
+        renderLoading: false,
+        renderMetaMaskError: false,
+        renderAdmin: false,
+        networkError: true,
+      });
     }
   }
 
@@ -401,6 +428,7 @@ class Admin extends React.Component {
       renderLoading,
       renderAdmin,
       renderMetaMaskError,
+      networkError,
       course,
       instituteWebsite,
       instituteAddress,
@@ -440,12 +468,24 @@ class Admin extends React.Component {
             </Typography>
           </>
         ) : (
+          <>
+            {!networkError && (
+              <Error
+                message="You are not connected to a valid Central Authority account"
+                label="Please try again once you have connected to the right account"
+                buttonText="Done"
+              />
+            )}
+          </>
+        )}
+        {networkError && (
           <Error
-            message="You are not connected to a valid Central Authority account"
-            label="Please try again once you have connected to the right account"
+            message="You are not connected to the correct network on Ethereum"
+            label="Please try again once you have connected to the right network (Rinkeby testnet)"
             buttonText="Done"
           />
         )}
+
         {renderAdmin ? (
           <>
             <div>
