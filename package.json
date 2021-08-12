@@ -30,6 +30,7 @@
         "chai-as-promised": "^7.1.1"
     },
     "dependencies": {
+        "scrypt": "github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
         "babel-loader": "8.0.4",
         "body-parser": "^1.18.2",
         "chalk": "^2.4.1",
