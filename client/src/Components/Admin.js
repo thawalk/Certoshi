@@ -6,6 +6,9 @@ import Button from "@material-ui/core/Button";
 import { Form } from "react-bootstrap";
 import Grid from "@material-ui/core/Grid";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   List,
   ListItem,
@@ -136,8 +139,11 @@ class Admin extends React.Component {
     } else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider);
     } else {
-      window.alert(
-        "Non-Ethereum browser detected. You should consider trying MetaMask!"
+      // window.alert(
+      //   "Non-Ethereum browser detected. You should consider trying MetaMask!"
+      // );
+      toast.warning(
+        "❕ Non-Ethereum browser detected. You should consider trying MetaMask!"
       );
       this.setState({
         renderLoading: false,
@@ -183,13 +189,15 @@ class Admin extends React.Component {
               renderMetaMaskError: false,
               renderAdmin: false,
             });
-            window.alert("You are not the admin");
+            // window.alert("You are not the admin");
+            toast.warning("❕ You are not the admin");
           }
         } catch (error) {
           console.log("error is", error);
         }
       } else {
-        window.alert("Institution contract not deployed to network");
+        // window.alert("Institution contract not deployed to network");
+        toast.warining("❕ Institution contract not deployed to network");
         this.setState({
           renderLoading: false,
           renderMetaMaskError: true,
@@ -281,20 +289,25 @@ class Admin extends React.Component {
               instituteCourses: new Map(),
               course: "",
             });
-            alert("Successfully added institute!");
+            // alert("Successfully added institute!");
+            toast.success("✅ Successfully added institute!");
           });
       } else {
-        window.alert("Not the account used to deploy smart contract");
+        // window.alert("Not the account used to deploy smart contract");
+        toast.warning("❕ Not the account used to deploy smart contract");
       }
     } catch (error) {
       console.log(error);
       console.log(error.code);
       if (error.code == -32603) {
-        window.alert("Institute account already exits");
+        // window.alert("Institute account already exits");
+        toast.error("❌ Institute account already exits!");
       } else if (error.code == 4001) {
-        window.alert("Transaction rejected");
+        // window.alert("Transaction rejected");
+        toast.warning("❕ Transaction rejected!");
       } else {
-        window.alert("Institute account address is not legit");
+        // window.alert("Institute account address is not legit");
+        toast.error("❌ Institute account address is not legit!");
       }
     }
   }
@@ -714,6 +727,17 @@ class Admin extends React.Component {
         ) : (
           <></>
         )}
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </>
     );
   }
