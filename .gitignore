@@ -8,4 +8,3 @@ client/build
 
 # Ignore build output of compiled contracts
 build/contracts/*
-contracts
