@@ -52,6 +52,12 @@ class App extends Component {
         <Switch>
           <DynamicLayoutRoute
             exact
+            path="/"
+            component={Admin}
+            layout="LANDING"
+          />
+          <DynamicLayoutRoute
+            exact
             path="/admin"
             component={Admin}
             layout="SYSADMIN"

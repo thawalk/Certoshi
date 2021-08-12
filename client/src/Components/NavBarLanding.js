@@ -18,49 +18,52 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 // import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Link from "react-router-dom/Link";
+import { default as CertifyIcon } from "@material-ui/icons/AccountBalanceWalletTwoTone";
+import LinkIcon from "@material-ui/icons/Link";
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
-    width: "100%"
+    width: "100%",
   },
   grow: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   menuButton: {
-    marginLeft: -12,
-    marginRight: 20
+    // marginLeft: -12,
+    // marginRight: 20,
   },
   title: {
     display: "none",
     [theme.breakpoints.up("sm")]: {
-      display: "block"
-    }
+      display: "block",
+    },
+    fontWeight: "900",
   },
   generateCertificate: {
     display: "block",
-    paddingLeft: 30
+    paddingLeft: 30,
   },
   sectionDesktop: {
     display: "none",
     [theme.breakpoints.up("md")]: {
-      display: "flex"
-    }
+      display: "flex",
+    },
   },
   sectionMobile: {
     display: "flex",
     [theme.breakpoints.up("md")]: {
-      display: "none"
-    }
-  }
+      display: "none",
+    },
+  },
 });
 
 class NavBarLanding extends React.Component {
   state = {
     anchorEl: null,
-    mobileMoreAnchorEl: null
+    mobileMoreAnchorEl: null,
   };
 
-  handleProfileMenuOpen = event => {
+  handleProfileMenuOpen = (event) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -69,7 +72,7 @@ class NavBarLanding extends React.Component {
     this.handleMobileMenuClose();
   };
 
-  handleMobileMenuOpen = event => {
+  handleMobileMenuOpen = (event) => {
     this.setState({ mobileMoreAnchorEl: event.currentTarget });
   };
 
@@ -91,6 +94,34 @@ class NavBarLanding extends React.Component {
         open={isMenuOpen}
         onClose={this.handleMenuClose}
       >
+        <MenuItem
+          style={{ justifyContent: "flex-end" }}
+          component={Link}
+          to="/"
+        >
+          Home
+        </MenuItem>
+        <MenuItem
+          style={{ justifyContent: "flex-end" }}
+          component={Link}
+          to="/admin"
+        >
+          Central Authority Portal
+        </MenuItem>
+        <MenuItem
+          style={{ justifyContent: "flex-end" }}
+          component={Link}
+          to="/institute"
+        >
+          Institute Portal
+        </MenuItem>
+        <MenuItem
+          style={{ justifyContent: "flex-end" }}
+          component={Link}
+          to="/view"
+        >
+          View Certificate
+        </MenuItem>
       </Menu>
     );
 
@@ -102,7 +133,6 @@ class NavBarLanding extends React.Component {
         open={isMobileMenuOpen}
         onClose={this.handleMobileMenuClose}
       >
-
         <MenuItem onClick={this.handleProfileMenuOpen}>
           <IconButton color="inherit">
             <AccountCircle />
@@ -114,7 +144,7 @@ class NavBarLanding extends React.Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="static" color="primary">
+        <AppBar position="static" color="white">
           <Toolbar>
             <IconButton
               className={classes.menuButton}
@@ -123,23 +153,34 @@ class NavBarLanding extends React.Component {
               component={Link}
               to="/"
             >
-              <HomeIcon />
+              <CertifyIcon color="primary" />
             </IconButton>
             <Typography
               className={classes.title}
               variant="h6"
-              color="inherit"
-              noWrap>
-              E-Certify
+              color="primary"
+              noWrap
+            >
+              Certoshi
             </Typography>
+            {/* <div className={classes.generateCertificate}>
+              <Typography
+                // variant="h6"
+                noWrap
+              >
+                Verified Credentials
+              </Typography>
+            </div> */}
             <div className={classes.grow} />
             <div className={classes.sectionDesktop}>
-              <Button
-                variant="contained"
-                component={Link} to="/login"
-                color="default">
-                Sign In
-              </Button>
+              <IconButton
+                aria-owns={isMenuOpen ? "material-appbar" : undefined}
+                aria-haspopup="true"
+                onClick={this.handleProfileMenuOpen}
+                color="inherit"
+              >
+                <LinkIcon />
+              </IconButton>
             </div>
             <div className={classes.sectionMobile}>
               <IconButton
@@ -147,7 +188,7 @@ class NavBarLanding extends React.Component {
                 onClick={this.handleMobileMenuOpen}
                 color="inherit"
               >
-                <MoreIcon />
+                <LinkIcon />
               </IconButton>
             </div>
           </Toolbar>
@@ -160,7 +201,7 @@ class NavBarLanding extends React.Component {
 }
 
 NavBarLanding.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(NavBarLanding);

@@ -16,64 +16,52 @@ import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Link from "react-router-dom/Link";
+import { default as CertifyIcon } from "@material-ui/icons/AccountBalanceWalletTwoTone";
+import LinkIcon from "@material-ui/icons/Link";
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
-    width: "100%"
+    width: "100%",
   },
   grow: {
-    flexGrow: 1
-  },
-  menu: {
-    display: "block",
-    paddingLeft: 30
+    flexGrow: 1,
   },
   menuButton: {
-    marginLeft: -12,
-    marginRight: 20
+    // marginLeft: -12,
+    // marginRight: 20,
   },
   title: {
     display: "none",
     [theme.breakpoints.up("sm")]: {
-      display: "block"
-    }
+      display: "block",
+    },
+    fontWeight: "900",
   },
-  inputRoot: {
-    color: "inherit",
-    width: "100%"
-  },
-  inputInput: {
-    paddingTop: theme.spacing.unit,
-    paddingRight: theme.spacing.unit,
-    paddingBottom: theme.spacing.unit,
-    paddingLeft: theme.spacing.unit * 10,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: 200
-    }
+  generateCertificate: {
+    display: "block",
+    paddingLeft: 30,
   },
   sectionDesktop: {
     display: "none",
     [theme.breakpoints.up("md")]: {
-      display: "flex"
-    }
+      display: "flex",
+    },
   },
   sectionMobile: {
     display: "flex",
     [theme.breakpoints.up("md")]: {
-      display: "none"
-    }
-  }
+      display: "none",
+    },
+  },
 });
 
 class NavBarSysAdmin extends React.Component {
   state = {
     anchorEl: null,
-    mobileMoreAnchorEl: null
+    mobileMoreAnchorEl: null,
   };
 
-  handleProfileMenuOpen = event => {
+  handleProfileMenuOpen = (event) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -82,7 +70,7 @@ class NavBarSysAdmin extends React.Component {
     this.handleMobileMenuClose();
   };
 
-  handleMobileMenuOpen = event => {
+  handleMobileMenuOpen = (event) => {
     this.setState({ mobileMoreAnchorEl: event.currentTarget });
   };
 
@@ -104,9 +92,33 @@ class NavBarSysAdmin extends React.Component {
         open={isMenuOpen}
         onClose={this.handleMenuClose}
       >
-
-        <MenuItem component={Link} to="/sysadmin-page/add-institutes">
-          Add Institutes
+        <MenuItem
+          style={{ justifyContent: "flex-end" }}
+          component={Link}
+          to="/"
+        >
+          Home
+        </MenuItem>
+        <MenuItem
+          style={{ justifyContent: "flex-end" }}
+          component={Link}
+          to="/admin"
+        >
+          Central Authority Portal
+        </MenuItem>
+        <MenuItem
+          style={{ justifyContent: "flex-end" }}
+          component={Link}
+          to="/institute"
+        >
+          Institute Portal
+        </MenuItem>
+        <MenuItem
+          style={{ justifyContent: "flex-end" }}
+          component={Link}
+          to="/view"
+        >
+          View Certificate
         </MenuItem>
       </Menu>
     );
@@ -130,7 +142,7 @@ class NavBarSysAdmin extends React.Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="static" color="primary">
+        <AppBar position="static" color="white">
           <Toolbar>
             <IconButton
               className={classes.menuButton}
@@ -139,21 +151,22 @@ class NavBarSysAdmin extends React.Component {
               component={Link}
               to="/"
             >
-              <HomeIcon />
+              <CertifyIcon color="primary" />
             </IconButton>
             <Typography
               className={classes.title}
               variant="h6"
-              color="inherit"
+              color="primary"
               noWrap
             >
-              E-Certify
+              Certoshi
             </Typography>
-            <div className={classes.menu}>
+            <div className={classes.generateCertificate}>
               <Typography
-                
-                color="inherit">
-                System Administrator
+                // variant="h6"
+                noWrap
+              >
+                Central Authority Credential Management Portal
               </Typography>
             </div>
             <div className={classes.grow} />
@@ -164,7 +177,7 @@ class NavBarSysAdmin extends React.Component {
                 onClick={this.handleProfileMenuOpen}
                 color="inherit"
               >
-                <AccountCircle />
+                <LinkIcon />
               </IconButton>
             </div>
             <div className={classes.sectionMobile}>
@@ -173,7 +186,7 @@ class NavBarSysAdmin extends React.Component {
                 onClick={this.handleMobileMenuOpen}
                 color="inherit"
               >
-                <MoreIcon />
+                <LinkIcon />
               </IconButton>
             </div>
           </Toolbar>
@@ -186,7 +199,7 @@ class NavBarSysAdmin extends React.Component {
 }
 
 NavBarSysAdmin.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(NavBarSysAdmin);
