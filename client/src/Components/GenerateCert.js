@@ -311,6 +311,7 @@ class GenerateCert extends React.Component {
         });
     } catch (error) {
       // alert("Account address is wrong or does not exist in the smart contract");
+      toast.warning("❕ You are not authorized to access this page");
       this.setState({ isLegitInstitute: false, renderLoading: false });
     }
   }
