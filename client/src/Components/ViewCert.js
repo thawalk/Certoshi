@@ -64,7 +64,16 @@ function ViewCert() {
         You may key in the certificate id to view the Verified Certificate
         created on the Credentials Ethereum Blockchain
       </Typography>
-      <Grid container style={{ height: "100%", justifyContent: "center" }}>
+      <Grid
+        container
+        style={{
+          height: "100%",
+          justifyContent: "center",
+          alignItems: " center",
+        }}
+        direction="column"
+        align
+      >
         <Paper className={classes.paper} style={{ borderRadius: "10px" }}>
           <Card
             style={{
@@ -132,6 +141,19 @@ function ViewCert() {
             </>
           )}
         </Paper>
+        <Box>
+          <Typography variant="subtitle1" style={{ fontWeight: "900" }}>
+            {" "}
+            For demo purposes only, here are some live certificates you can try
+            to view:
+          </Typography>
+          <Typography style={{ textAlign: "center" }}>
+            f45615d8-75d2-4ca9-a210-1511cd14129f
+          </Typography>
+          <Typography style={{ textAlign: "center" }}>
+            5a61d8ed-15bd-4e34-953e-44029f4bbbd6
+          </Typography>
+        </Box>
       </Grid>
     </>
   );
