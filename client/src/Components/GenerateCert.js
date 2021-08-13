@@ -187,25 +187,51 @@ class GenerateCert extends React.Component {
     await this.loadWeb3Metamask();
   }
 
+  // async loadWeb3Metamask() {
+  //   if (window.ethereum) {
+  //     window.web3 = new Web3(window.ethereum);
+  //     await window.ethereum.enable().then((res) => {
+  //       this.setState({
+  //         renderLoading: false,
+  //         renderMetaMaskError: false,
+  //       });
+  //     });
+  //   } else if (window.web3) {
+  //     window.web3 = new Web3(window.web3.currentProvider);
+  //     this.setState({
+  //       renderLoading: false,
+  //       renderMetaMaskError: false,
+  //     });
+  //   } else {
+  //     //   window.alert(
+  //     //     "Non-Ethereum browser detected. You should consider trying MetaMask!"
+  //     //   );
+  //     toast.warning(
+  //       "❕ Non-Ethereum browser detected. You should consider trying MetaMask!"
+  //     );
+  //     this.setState({
+  //       renderLoading: false,
+  //       renderMetaMaskError: true,
+  //     });
+  //   }
+  // }
+
   async loadWeb3Metamask() {
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum);
-      await window.ethereum.enable().then((res) => {
-        this.setState({
-          renderLoading: false,
-          renderMetaMaskError: false,
-        });
+      await window.ethereum.enable();
+      this.setState({
+        renderMetaMaskError: false,
       });
     } else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider);
       this.setState({
-        renderLoading: false,
         renderMetaMaskError: false,
       });
     } else {
-      //   window.alert(
-      //     "Non-Ethereum browser detected. You should consider trying MetaMask!"
-      //   );
+      // window.alert(
+      //   "Non-Ethereum browser detected. You should consider trying MetaMask!"
+      // );
       toast.warning(
         "❕ Non-Ethereum browser detected. You should consider trying MetaMask!"
       );
@@ -217,18 +243,38 @@ class GenerateCert extends React.Component {
   }
 
   async checkAddressAndGetCourses() {
+    console.log(1);
     const web3 = window.web3;
     if (web3 === undefined) {
       return;
     }
+    console.log(2);
 
     const accounts = await web3.eth.getAccounts();
+    console.log(3);
     let caller = accounts[0];
+    console.log(4);
 
-    const networkId = await web3.eth.net.getId();
+    // TODO: Fix bug
+    let networkId;
+    try {
+      networkId = await web3.eth.net.getId();
+    } catch (err) {
+      console.log("You are currently on this network:", networkId);
+      this.setState({
+        renderLoading: false,
+        renderMetaMaskError: false,
+        networkError: true,
+      });
+      toast.warning(
+        "❕ Please make sure you are connected to the correct network"
+      );
+      return;
+    }
+
     if (!(networkId in Institution.networks)) {
       console.log("You are currently on this network:", networkId);
-      this.setState({ networkError: true });
+      this.setState({ networkError: true, renderLoading: false });
       toast.warning(
         "❕ Please make sure you are connected to the correct network"
       );
@@ -260,11 +306,12 @@ class GenerateCert extends React.Component {
             instituteWebsite: res[2],
             instituteCourses: formattedInstituteCoursesData,
             isLegitInstitute: true,
+            renderLoading: false,
           });
         });
     } catch (error) {
       // alert("Account address is wrong or does not exist in the smart contract");
-      this.setState({ isLegitInstitute: false });
+      this.setState({ isLegitInstitute: false, renderLoading: false });
     }
   }
 
