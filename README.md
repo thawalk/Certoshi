@@ -13,7 +13,7 @@ You are welcome to visit the live website connected to the Ethereum Rinkeby netw
   - [Setting up Blockchain on Local Network](#Setting-up-Blockchain-on-Local-Network)
   - [Setting up Blockchain on Ethereum Rinkeby Test Network](#Setting-up-Blockchain-on-Ethereum-Rinkeby-Test-Network)
   - [Setting up Client Application](#Setting-up-Client-Application)
-- [Security & Testing](#Security-&-Testing)
+- [Security & Testing](#Security--Testing)
   - [Smart Contracts Funtionality Testing](#Smart-Contracts-Funtionality-Testing)
   - [Smart Contracts Security Testing & Analysis](#Smart-Contracts-Security-Testing-Analysis)
 - [Demo](#Demo)
