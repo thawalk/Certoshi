@@ -15,7 +15,7 @@ You are welcome to visit the live website connected to the Ethereum Rinkeby netw
   - [Setting up Client Application](#Setting-up-Client-Application)
 - [Security & Testing](#Security-&-Testing)
   - [Smart Contracts Funtionality Testing](#Smart-Contracts-Funtionality-Testing)
-  - [Smart Contracts Security Testing & Analysis](#Smart-Contracts-Security-Testing-\&-Analysis)
+  - [Smart Contracts Security Testing & Analysis](#Smart-Contracts-Security-Testing-Analysis)
 - [Demo](#Demo)
   - [Registering Institutes by Central Authority](#Use-Case-1:-Registering-Institutes)
   - [Issuing Certificates by Institutes](#Use-Case-2:-Issuing-Certificates)
