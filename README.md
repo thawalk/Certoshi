@@ -318,3 +318,10 @@ Accessing Use Cases 1 to 3 on a normal browser without Metamask
 ![](https://i.imgur.com/imSzQpj.jpg)
 
 ---
+
+## Team Members
+
+- [Tharun Adhi Narayan](https://github.com/thawalk)
+- [Wong Ye Qi Daryll](https://github.com/Akmalhakimteo)
+- [Sesilia Fenina Gunawan](https://github.com/sesiliafenina)
+- [Akmal Hakim Teo](https://github.com/Akmalhakimteo)
