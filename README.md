@@ -253,7 +253,7 @@ There are **4 main Use Cases**:
 
 🔽 Here are some additional screenshots of our application to view how it works!
 
-### Use Case 1: Registering Institutes
+## Use Case 1: Registering Institutes
 
 Interface to Register an Institute
 ![](https://i.imgur.com/gwi9dId.jpg)
@@ -267,7 +267,7 @@ Success on Registering an Institute
 Unauthorized Access to page for Registering Institutes
 ![](https://i.imgur.com/ZZ9wwSP.jpg)
 
-### Use Case 2: Issuing Certificates
+## Use Case 2: Issuing Certificates
 
 Interface to Issue a Certificate
 ![](https://i.imgur.com/ohcU6oD.jpg)
@@ -278,7 +278,7 @@ Success on Issuing a Certificate
 Unauthorized Access to page for Issuing Certificates
 ![](https://i.imgur.com/b8IVIrq.jpg)
 
-### Use Case 3: Revoking Certificates
+## Use Case 3: Revoking Certificates
 
 Interface to Revoke a Certificate
 ![](https://i.imgur.com/WiUwAWb.jpg)
@@ -292,7 +292,7 @@ Certificate before it is revoked
 Certificate after it is revoked
 ![](https://i.imgur.com/Zd6kJfG.jpg)
 
-### Use Case 4: Viewing Certificates
+## Use Case 4: Viewing Certificates
 
 Interface to enter Certificate ID to view Certificate
 ![](https://i.imgur.com/AVGQBPd.jpg)
@@ -312,7 +312,7 @@ Additional Information of a Revoked Certificate
 Accessing an Invalid Certificate
 ![](https://i.imgur.com/iY61dQZ.jpg)
 
-### Others
+## Others
 
 Accessing Use Cases 1 to 3 on a normal browser without Metamask
 ![](https://i.imgur.com/imSzQpj.jpg)
