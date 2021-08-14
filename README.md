@@ -29,7 +29,7 @@ You are welcome to visit the live website connected to the Ethereum Rinkeby netw
 Node Version Used: 14.16.1
 NPM Version Used: 6.14.12
 
-Please follow the instructions below closely. As some packages are not well maintained, you may face some issues in installation. If you do face issues in installation, you may refer to Debug.md to view suggestions on how to debug.
+Please follow the instructions below closely. As some packages are not well maintained, you may face some issues in installation. If you do face issues in installation, you may refer to [Debug.md](Debug.md) to view suggestions on how to debug.
 
 ### Downloading repository
 
