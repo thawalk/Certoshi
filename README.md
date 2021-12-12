@@ -2,11 +2,11 @@
 
 ![](https://i.imgur.com/fPlaUCp.jpg)
 
-You can view the demo of the application [here](https://youtu.be/ZZOoJguZkeY)!! 🚀
+You can view the DEMO of the application [here](https://youtu.be/ZZOoJguZkeY)!! 🚀
 
 You are welcome to visit the live website connected to the Ethereum Rinkeby network at https://certoshi.vercel.app/ 😁
 
-[Click here to view other screenshots of our application!](#Demo)
+[Click here to view other screenshots of our application!](#Use-Cases)
 
 ## Documentation Contents
 
