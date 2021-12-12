@@ -2,6 +2,8 @@
 
 ![](https://i.imgur.com/fPlaUCp.jpg)
 
+You can view the demo of the application [here](https://youtu.be/ZZOoJguZkeY)!! 🚀
+
 You are welcome to visit the live website connected to the Ethereum Rinkeby network at https://certoshi.vercel.app/ 😁
 
 [Click here to view other screenshots of our application!](#Demo)
@@ -16,7 +18,7 @@ You are welcome to visit the live website connected to the Ethereum Rinkeby netw
 - [Security & Testing](#Security--Testing)
   - [Smart Contracts Funtionality Testing](#Smart-Contracts-Funtionality-Testing)
   - [Smart Contracts Security Testing & Analysis](#Smart-Contracts-Security-Testing-Analysis)
-- [Demo](#Demo)
+- [Use-Cases](#Use-Cases)
   - [Registering Institutes by Central Authority](#Use-Case-1-Registering-Institutes)
   - [Issuing Certificates by Institutes](#Use-Case-2-Issuing-Certificates)
   - [Issuing Certificates by Institutes](#Use-Case-2-Issuing-Certificates)
@@ -233,7 +235,7 @@ docker run -v %(cd)%:/contracts mythril/myth analyze /contracts/Certification.so
 
 ---
 
-## Demo
+## Use-Cases
 
 You are welcome to visit the live website connected to the Ethereum Rinkeby network at https://certoshi.vercel.app/ 😁
 
@@ -322,6 +324,5 @@ Accessing Use Cases 1 to 3 on a normal browser without Metamask
 ## Team Members
 
 - [Tharun Adhi Narayan](https://github.com/thawalk)
-- [Wong Ye Qi Daryll](https://github.com/Akmalhakimteo)
-- [Sesilia Fenina Gunawan](https://github.com/sesiliafenina)
+- [Wong Ye Qi Daryll](https://github.com/daryllman)
 - [Akmal Hakim Teo](https://github.com/Akmalhakimteo)
