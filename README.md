@@ -31,6 +31,8 @@ You are welcome to visit the live website connected to the Ethereum Rinkeby netw
 Node Version Used: 14.16.1
 NPM Version Used: 6.14.12
 
+Add metamask plugin to your supported browser (chrome) from [here](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en) and login
+
 Please follow the instructions below closely. As some packages are not well maintained, you may face some issues in installation. If you do face issues in installation, you may refer to [Debug.md](Debug.md) to view suggestions on how to debug.
 
 ### Downloading repository
@@ -186,17 +188,30 @@ REACT_APP_NETWORK_ID=1337
 
 3. Start application
 
-Option 1 - To connect to local blockchain network
+### Option 1 - To connect to local blockchain network
 
 ```bash
 npm start
 ```
 
-Option 2 - To connect to Rinkeby test network
+To use the front-end application running at http://localhost:3000/, connect to the Localhost Network in metamask
+
+![](https://i.imgur.com/pjkb80e.png)
+
+Import in the account that you used to deploy the contracts using the private key of the account, you can find it in the key symbol of the Ganache UI beside your account.
+
+![](https://i.imgur.com/f090jmt.png)
+
+### Option 2 - To connect to Rinkeby test network
 
 ```bash
 npm run start:testnet
 ```
+
+To use the front-end application running at http://localhost:3000/, connect to the Rinkeby Test Network in metamask and use the account that you used to deploy the contracts.
+
+![](https://i.imgur.com/m2W1PUI.png)
+
 
 > This will connect to the Rinkeby network with Infura, only for viewing of certificates. The other functions uses the Ethereum-based browsers (connected to Metamask wallets) to access the network.
 
